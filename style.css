@@ -1,0 +1,478 @@
+:root {
+    --orange-main: #FF6600;
+    --orange-dark: #E65C00;
+    --text-dark: #2D3436;
+    --bg-light: #F8FAFC;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* FUNDO LARANJA NA TELA INTEIRA */
+body {
+    background-color: var(--orange-main);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* CONTAINER CENTRALIZADO E SEM MOLDURA EXTERNA */
+#app-container {
+    width: 100%;
+    max-width: 420px;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* GERENCIAMENTO DE EXIBIÇÃO DE TELAS */
+.screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.screen.active {
+    display: flex !important;
+}
+
+/* ========================================================
+   TELA 1: SPLASH SCREEN (LOGO MAIOR + TEXTO NO BALÃO + ANIMAÇÃO)
+   ======================================================== */
+#splash-screen {
+    background-color: transparent;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-container {
+    background: transparent;
+    width: 100%;
+    margin: 0px auto 5px auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ENVOLTÓRIO QUE FAZ A LOGO E O TEXTO FLUTUAREM JUNTOS */
+.logo-wrapper {
+    position: relative;
+    display: inline-block;
+    animation: floatLogo 3.5s ease-in-out infinite;
+}
+
+/* IMAGEM DO CÉREBRO AUMENTADA */
+.brand-logo-img {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    filter: brightness(0) invert(1) drop-shadow(0px 8px 18px rgba(0, 0, 0, 0.25));
+}
+
+/* TEXTO "APREND QUEST" DENTRO DO BALÃO BRANCO */
+.logo-balloon-text {
+    position: absolute;
+    top: 42%;
+    left: 49%;
+    transform: translate(-50%, -50%);
+    color: var(--orange-main);
+    font-weight: 900;
+    font-size: 1.25rem;
+    line-height: 1.05;
+    text-align: center;
+    pointer-events: none;
+    letter-spacing: -0.3px;
+}
+
+/* ANIMAÇÃO DE FLUTUAR */
+@keyframes floatLogo {
+    0% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.02);
+    }
+    100% {
+        transform: translateY(0px) scale(1);
+    }
+}
+
+#splash-screen .splash-title {
+    color: #FFFFFF;
+    font-size: 2.1rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+#splash-screen .splash-subtitle {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 1.05rem;
+    max-width: 310px;
+    margin: 0 auto 15px auto;
+    line-height: 1.4;
+}
+
+.features-badges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 28px 0;
+    flex-wrap: wrap;
+}
+
+.badge-item {
+    background-color: #FFFFFF; /* Fundo branco para sobressair no laranja */
+    color: var(--orange-dark); /* Texto na cor laranja forte para contrastar */
+    border: none;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra elegante */
+    transition: transform 0.2s ease;
+}
+
+.badge-item:hover {
+    transform: translateY(-2px);
+}
+
+#btn-start {
+    background-color: #FFFFFF;
+    color: var(--orange-main);
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    display: block;
+}
+
+#btn-start:hover, #btn-start:active {
+    background-color: #F8FAFC;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+/* ========================================================
+   TELAS INTERNAS (CARDS BRANCOS)
+   ======================================================== */
+.web-card {
+    width: 100%;
+    background-color: #FFFFFF;
+    padding: 25px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-circle-small {
+    font-weight: 800;
+    color: var(--orange-main);
+    margin-bottom: 15px;
+}
+
+.auth-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 100%;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-dark);
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.btn-orange-lg, .btn-orange {
+    width: 100%;
+    background-color: var(--orange-main);
+    color: #FFFFFF;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-orange-lg:hover, .btn-orange:hover {
+    background-color: var(--orange-dark);
+}
+
+.link-muted {
+    font-size: 0.85rem;
+    color: #64748B;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    font-size: 0.85rem;
+    color: #64748B;
+}
+
+.footer-link a {
+    color: var(--orange-main);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.title-orange {
+    color: var(--orange-main);
+    font-size: 1.3rem;
+}
+
+/* TELA 4: SELEÇÃO DE PERSONAGEM */
+#screen-4 {
+    background-color: #FFFFFF;
+    padding: 25px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.title-select {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px 30px;
+    margin-bottom: 25px;
+}
+
+.char-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.char-box {
+    width: 90px;
+    height: 90px;
+    background-color: #E2E8F0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, border 0.2s;
+}
+
+.char-card.selected .char-box {
+    border: 3px solid var(--orange-main);
+    background-color: #FFE6D5;
+    transform: scale(1.05);
+}
+
+.char-emoji { font-size: 2.8rem; }
+.char-name { font-size: 0.85rem; font-weight: 700; margin-top: 6px; }
+
+.btn-orange-sm {
+    background-color: var(--orange-main);
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* TELAS 5 & 6: DASHBOARD E HARDWARE */
+#screen-5, #screen-6 {
+    background-color: #FFFFFF;
+    padding: 25px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-greeting { display: flex; align-items: center; gap: 10px; }
+
+.profile-circle {
+    width: 48px;
+    height: 48px;
+    background-color: #FFE6D5;
+    border: 2px solid var(--orange-main);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.user-greeting h3 { font-size: 0.95rem; line-height: 1.2; }
+
+.level-pill {
+    background-color: #E2E8F0;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.daily-mission-card {
+    width: 100%;
+    background-color: var(--orange-main);
+    color: #FFFFFF;
+    padding: 20px 15px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.daily-mission-card h4 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.daily-mission-card p {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    opacity: 0.95;
+}
+
+.btn-gray-pill {
+    background-color: #D9D9D9;
+    border: none;
+    padding: 4px 20px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #555;
+    cursor: pointer;
+}
+
+.trail-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+
+.trail-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-trail {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-trail:hover, .btn-trail:active {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-trail strong { font-size: 0.95rem; }
+.btn-trail span { font-size: 0.75rem; opacity: 0.9; margin-top: 2px; }
+
+.btn-blue { background-color: #4A90E2; }
+.btn-purple { background-color: #8B5CF6; }
+.btn-green { background-color: #10B981; }
+
+.lesson-title { font-size: 1.4rem; font-weight: 800; }
+.lesson-subtitle { font-size: 0.95rem; margin-top: 4px; margin-bottom: 20px; }
+
+.content-orange-box {
+    background-color: var(--orange-main);
+    color: #FFFFFF;
+    padding: 25px 20px;
+    border-radius: 16px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.btn-green-round {
+    background-color: #00C853;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+/* ESTILIZAÇÃO DA LOGO DENTRO DOS CARDS BRANCOS */
+.card-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-logo-img {
+    width: 100%;
+    max-width: 200px; /* Tamanho compacto e elegante para o topo do formulário */
+    height: auto;
+    object-fit: contain;
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AprendeQuest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main id="app-container">
+
+        <!-- TELA 1: SPLASH / LANDING PAGE -->
+        <section id="splash-screen" class="screen active">
+           <div class="hero-container">
+    <div class="logo-wrapper">
+        <img src="img/logo_tipo_aprendQuest.png" alt="AprendQuest Logo" class="brand-logo-img">
+        <span class="logo-balloon-text">Aprend<br>Quest</span>
+    </div>
+</div>
+            
+            <h1 class="splash-title">Aprenda Tecnologia Jogando</h1>
+            <p class="splash-subtitle">A plataforma divertida para organizar estudos e cumprir missões diárias!</p>
+            
+           <!-- Destaques dos recursos na tela inicial -->
+    <div class="features-badges">
+    <span class="badge-item">🚀 Missões</span>
+    <span class="badge-item">⚡ XP & Níveis</span>
+    <span class="badge-item">💻 Prática</span>
+  </div>
+            
+            <button id="btn-start" type="button" class="btn-orange-lg">Bora começar</button>
+        </section>
+
+        <!-- TELA 2: LOGIN -->
+        <section id="login-screen" class="screen">
+            <div class="web-card">
+                <!-- LOGO CENTRALIZADA NO TOPO DO CARD -->
+        <div class="card-logo-container">
+            <img src="img/logo_tipo_aprendQuest.png" alt="AprendQuest Logo" class="card-logo-img">
+        </div>
+                
+                <h2>Acessar Plataforma</h2>
+
+                <form id="login-form" class="auth-form">
+                    <div class="input-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" name="email" placeholder="seuemail@email.com" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-password">Senha</label>
+                        <input type="password" id="login-password" name="password" placeholder="******" required>
+                    </div>
+
+                    <button type="submit" class="btn-orange">Entrar</button>
+                </form>
+
+                <a href="#" id="go-to-forgot" class="link-muted">Esqueceu a senha?</a>
+                <p class="footer-link">Não tem conta? <a href="#" id="go-to-register">Criar Conta</a></p>
+            </div>
+        </section>
+
+        <!-- TELA RECUPERAR SENHA -->
+        <section id="forgot-password-screen" class="screen">
+            <div class="web-card">
+                <h2 class="title-orange">RECUPERAR SENHA</h2>
+                <p class="subtitle" style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">
+                    Digite seu e-mail cadastrado para receber as instruções.
+                </p>
+
+                <div id="forgot-success-msg" style="display: none; background-color: #E6F4EA; color: #137333; padding: 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; border: 1px solid #CEEAD6; text-align: center;">
+                    ✉️ Instruções enviadas! Redirecionando...
+                </div>
+
+                <form id="forgot-password-form" class="auth-form">
+                    <div class="input-group">
+                        <label for="forgot-email">Email</label>
+                        <input type="email" id="forgot-email" name="email" placeholder="seuemail@email.com" required>
+                    </div>
+
+                    <button type="submit" class="btn-orange">Enviar Instruções</button>
+                </form>
+
+                <p class="footer-link" style="margin-top: 15px;">
+                    Lembrou a senha? <a href="#" id="go-back-to-login">Voltar ao Login</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- TELA 3: CRIAR CONTA -->
+        <section id="register-screen" class="screen">
+            <div class="web-card">
+                <h2 class="title-orange">CRIAR CONTA</h2>
+
+                <form id="register-form" class="auth-form">
+                    <div class="input-group">
+                        <label for="reg-name">Nome completo</label>
+                        <input type="text" id="reg-name" name="fullname" placeholder="Nome Sobrenome" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="reg-email">Email</label>
+                        <input type="email" id="reg-email" name="email" placeholder="seuemail@email.com" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="reg-password">Senha</label>
+                        <input type="password" id="reg-password" name="password" placeholder="Crie sua senha" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="reg-confirm-password">Confirmar senha</label>
+                        <input type="password" id="reg-confirm-password" name="confirmPassword" placeholder="Repita a senha" required>
+                    </div>
+
+                    <button type="submit" class="btn-orange">CRIAR CONTA</button>
+                </form>
+
+                <p class="footer-link">Já tem uma conta? <a href="#" id="go-to-login">Entrar</a></p>
+            </div>
+        </section>
+
+        <!-- TELA 4: SELEÇÃO DE PERSONAGEM -->
+        <section id="screen-4" class="screen">
+            <h2 class="title-select">Escolha o seu personagem</h2>
+            
+            <div class="character-grid">
+                <div class="char-card selected" data-char="Mago">
+                    <div class="char-box"><span class="char-emoji">🧙‍♂️</span></div>
+                    <span class="char-name">Mago</span>
+                </div>
+                <div class="char-card" data-char="Cavalheiro">
+                    <div class="char-box"><span class="char-emoji">⚔️</span></div>
+                    <span class="char-name">Cavalheiro</span>
+                </div>
+                <div class="char-card" data-char="Cientista">
+                    <div class="char-box"><span class="char-emoji">🧪</span></div>
+                    <span class="char-name">Cientista</span>
+                </div>
+                <div class="char-card" data-char="Astronauta">
+                    <div class="char-box"><span class="char-emoji">👩‍🚀</span></div>
+                    <span class="char-name">Astronauta</span>
+                </div>
+                <div class="char-card" data-char="Programadora">
+                    <div class="char-box"><span class="char-emoji">🤖</span></div>
+                    <span class="char-name">Programadora</span>
+                </div>
+                <div class="char-card" data-char="Hacker">
+                    <div class="char-box"><span class="char-emoji">👨‍💻</span></div>
+                    <span class="char-name">Hacker</span>
+                </div>
+            </div>
+
+            <button id="btn-confirm-char" class="btn-orange-sm">Confirmar escolha</button>
+        </section>
+
+        <!-- TELA 5: TRILHA DE APRENDIZADO -->
+        <section id="screen-5" class="screen">
+            <div class="dashboard-top">
+                <div class="user-greeting">
+                    <div class="profile-circle"></div>
+                    <div>
+                        <h3>Boas-vindas,</h3>
+                        <h3 class="user-role" id="user-display-name">Aprendiz!</h3>
+                    </div>
+                </div>
+                <div class="level-pill">
+                    Nível 1 <span>100 XP</span>
+                </div>
+            </div>
+
+            <div class="daily-mission-card">
+                <h4>Missão do dia</h4>
+                <p>Introdução à Lógica</p>
+                <button class="btn-gray-pill" id="btn-daily-start">Iniciar</button>
+            </div>
+
+            <h3 class="trail-title">Trilha de Aprendizado</h3>
+
+            <div class="trail-buttons">
+                <button id="btn-trail-prog" class="btn-trail btn-blue">
+                    <strong>Programação</strong>
+                    <span>0 / 5 Aulas</span>
+                </button>
+                
+                <button id="btn-trail-hw" class="btn-trail btn-purple">
+                    <strong>Hardware</strong>
+                    <span>Conheça as peças</span>
+                </button>
+                
+                <button id="btn-trail-quiz" class="btn-trail btn-green">
+                    <strong>Desafios e Quizzes</strong>
+                    <span>Ganhe +50 XP</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- TELA 6: CONTEÚDO DE HARDWARE -->
+        <section id="screen-6" class="screen">
+            <h2 class="lesson-title">Introdução ao Hardware</h2>
+            <h4 class="lesson-subtitle">Conhecendo os Componentes</h4>
+
+            <div class="content-orange-box">
+                <p>O Hardware representa todas as partes físicas do computador.</p>
+                <p>O Processador (CPU) funciona como o 'cérebro'.</p>
+                <p>A Memória RAM guarda dados temporários em uso, e a Fonte fornece energia para tudo funcionar!</p>
+            </div>
+
+            <button id="btn-start-quiz" class="btn-green-round">Iniciar Quiz de Hardware</button>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
