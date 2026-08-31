@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte seu Computador - AprendQuest</title>
+    <link rel="stylesheet" href="Desafio_final.css">
+</head>
+<body>
+
+    <section class="screen active">
+        <div class="web-card">
+            
+            <div class="user-progress-badge">
+                <span class="level-tag">Laboratório</span>
+                <span class="px-tag">⚡ +50 XP</span>
+            </div>
+
+            <h2 class="quiz-counter-title">Monte sua Estação!</h2>
+
+            <!-- MANUAL INTRODUTÓRIO -->
+            <div class="manual-box">
+                <span class="manual-step-badge" id="step-badge">Passo 1 de 7</span>
+                <p id="instruction-text" class="instruction-text">
+                    Clique na <strong>Placa-Mãe</strong> para começar a montar o computador!
+                </p>
+            </div>
+
+            <!-- CENÁRIO LIVRE DA MESA -->
+            <div class="desk-workspace" id="desk-workspace">
+                <!-- Peças internas -->
+                <div id="slot-motherboard" class="build-piece motherboard hidden">🟩</div>
+                <div id="slot-cpu" class="build-piece cpu hidden">🧠</div>
+                <div id="slot-ram" class="build-piece ram hidden">⚡</div>
+                
+                <!-- Gabinete (Torre) -->
+                <div id="slot-case" class="build-piece case hidden">🗄️</div>
+                
+                <!-- Periféricos externos -->
+                <div id="slot-monitor" class="build-piece monitor hidden">🖥️</div>
+                <div id="slot-keyboard" class="build-piece keyboard hidden">⌨️</div>
+                <div id="slot-mouse" class="build-piece mouse hidden">🖱️</div>
+            </div>
+
+            <!-- OVERLAY DE FEEDBACK (CHECK / X) -->
+            <div id="status-overlay" class="status-overlay hidden">
+                <span id="status-icon">✅</span>
+            </div>
+
+            <!-- INVENTÁRIO DE SELEÇÃO -->
+            <div class="parts-inventory" id="parts-inventory">
+                <button class="part-btn" onclick="tryAssemble('cpu')">
+                    <span class="part-icon">🧠</span>
+                    <span>Processador</span>
+                </button>
+                <button class="part-btn" onclick="tryAssemble('motherboard')">
+                    <span class="part-icon">🟩</span>
+                    <span>Placa-Mãe</span>
+                </button>
+                <button class="part-btn" onclick="tryAssemble('monitor')">
+                    <span class="part-icon">🖥️</span>
+                    <span>Monitor</span>
+                </button>
+                <button class="part-btn" onclick="tryAssemble('ram')">
+                    <span class="part-icon">⚡</span>
+                    <span>Memória RAM</span>
+                </button>
+                <button class="part-btn" onclick="tryAssemble('mouse')">
+                    <span class="part-icon">🖱️</span>
+                    <span>Mouse</span>
+                </button>
+                <button class="part-btn" onclick="tryAssemble('case')">
+                    <span class="part-icon">🗄️</span>
+                    <span>Gabinete</span>
+                </button>
+                <button class="part-btn" onclick="tryAssemble('keyboard')">
+                    <span class="part-icon">⌨️</span>
+                    <span>Teclado</span>
+                </button>
+            </div>
+
+            <button id="btn-finish-build" type="button" class="btn-green-round hidden" onclick="window.location.href= 'organizacao.html'">
+                Concluir Montagem! 🎉
+            </button>
+        </div>
+    </section>
+
+    <script src="Desafio_final.js"></script>
+
+<!-- OVERLAY / TELA DE PARABÉNS (INICIALMENTE ESCONDIDA) -->
+<div id="congratulations-modal" class="modal-overlay hidden">
+    <div class="congratulations-card">
+        <!-- Ícone / Animação de Troféu -->
+        <div class="trophy-badge">🏆</div>
+
+        <h2 class="congrats-title">PARABÉNS! 🎉</h2>
+        <p class="congrats-subtitle">Você montou a estação inteira com sucesso!</p>
+
+        <!-- Recompensas em destaque -->
+        <div class="reward-box">
+            <div class="reward-item">
+                <span class="reward-icon">⚡</span>
+                <span class="reward-value">+50 XP</span>
+            </div>
+            <div class="reward-item">
+                <span class="reward-icon">🥇</span>
+                <span class="reward-value">Mestre do Hardware</span>
+            </div>
+        </div>
+
+        <button type="button" class="btn-conclude-final" onclick="window.location.href='organizacao.html'">
+            Concluir Missão 🚀
+        </button>
+    </div>
+</div>
+
+
+
+</body>
+</html>

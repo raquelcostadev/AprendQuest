@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espaço de Saúde Mental e Lógica 🚀</title>
+    <!-- Adicione isso dentro do <head> do organizacao.html -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .org-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .header-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .step-card {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .step-card.active {
+            display: flex;
+        }
+
+        .step-badge {
+            background-color: #e0e7ff;
+            color: #4338ca;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            width: fit-content;
+        }
+
+        h2 { margin: 0; color: #1e293b; font-size: 1.3rem; }
+        h3 { margin: 8px 0 0 0; color: #334155; font-size: 1.1rem; }
+        p { margin: 0; color: #64748b; font-size: 0.95rem; }
+
+        .video-container {
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            max-height: 260px;
+        }
+
+        .options-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .mood-btn, .pattern-opt {
+            font-size: 1.8rem;
+            padding: 12px 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 14px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mood-btn:hover, .pattern-opt:hover { border-color: #818cf8; }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            40% { transform: translateY(-12px) scale(1.1); }
+            70% { transform: translateY(0) scale(0.95); }
+            100% { transform: translateY(-4px) scale(1); }
+        }
+
+        .bounce {
+            animation: bounce 0.4s ease-in-out;
+            border-color: #4f46e5 !important;
+            background-color: #e0e7ff !important;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover { background: #4338ca; }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .feedback-msg {
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .input-box:focus { border-color: #4f46e5; }
+
+
+      /* Container dos botões de emoção */
+.emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+}
+
+/* Estilização moderna e arredondada dos botões */
+.mood-option-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background-color: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    color: #334155;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Efeito ao passar o mouse */
+.mood-option-btn:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Efeito ao clicar */
+.mood-option-btn:active {
+    transform: translateY(0);
+}
+
+/* Classe aplicada via JS quando o botão for selecionado */
+.mood-option-btn.selected {
+    background-color: #e0f2fe;
+    border-color: #0284c7;
+    color: #0369a1;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.mood-option-btn .emoji {
+    font-size: 1.6rem;
+}
+
+body {
+    background-color: #0F172A; /* Azul meia-noite suave e focado */
+    color: #F8FAFC;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div class="org-container">
+        <header class="header-status">
+            <button id="btn-back-main" class="btn-secondary">⬅️ Voltar ao Início</button>
+            <strong id="user-px" style="color: #d97706;">⚡ 200 PX</strong>
+        </header>
+
+        <!-- ETAPA 1: SAÚDE MENTAL & AUTORREGULAÇÃO -->
+        <section id="step-1" class="step-card active">
+            <span class="step-badge">Missão 1 de 5</span>
+            <h2>🧠 Gestão Emocional & Calma</h2>
+            <p>Assista ao vídeo no seu tempo para aprender sobre suas emoções:</p>
+            
+            <div class="video-container">
+                <video controls style="width: 100%; border-radius: 12px; max-height: 260px;">
+                    <source src="video/videoplayback.mp4" type="video/mp4">
+                    Seu navegador não suporta a exibição deste vídeo.
+                </video>
+            </div>
+
+            <h3>🌈 Como seu cérebro está agora?</h3>
+            <p>Escolha o emoji que melhor representa seu sentimento:</p>
+            <div class="options-row">
+                <button class="mood-btn" onclick="selectMood('Tranquilo', event)">😊</button>
+                <button class="mood-btn" onclick="selectMood('Agitado', event)">⚡</button>
+                <button class="mood-btn" onclick="selectMood('Cansado', event)">😴</button>
+            </div>
+
+            <div id="mood-feedback" class="feedback-msg"></div>
+            <button class="btn-primary" onclick="nextStep(2)">Avançar para a Missão 2 ➡️</button>
+        </section>
+
+  <div id="step-2" class="step-card">
+    <span class="badge">Missão 2 de 5</span>
+    <h2>🌡️ Termômetro das Emoções</h2>
+    
+    <!-- Contador de Perguntas -->
+    <div id="question-tracker" style="color: #64748b; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px;">Pergunta 1 de 3</div>
+    
+    <!-- Enunciado Dinâmico -->
+    <p id="emotion-question" style="font-size: 1.05rem; color: #1e293b; font-weight: 500; min-height: 48px;"></p>
+
+    <!-- Grid de Opções -->
+    <div class="emotion-grid">
+        <button class="mood-option-btn" onclick="selectEmotion('Frustração', '😤', this)">
+            <span class="emoji">😤</span>
+            <span>Frustração</span>
+        </button>
+        <button class="mood-option-btn" onclick="selectEmotion('Tristeza', '😢', this)">
+            <span class="emoji">😢</span>
+            <span>Tristeza</span>
+        </button>
+        <button class="mood-option-btn" onclick="selectEmotion('Impaciência', '⚡', this)">
+            <span class="emoji">⚡</span>
+            <span>Impaciência</span>
+        </button>
+        <button class="mood-option-btn" onclick="selectEmotion('Calma', '🧘', this)">
+            <span class="emoji">🧘</span>
+            <span>Calma</span>
+        </button>
+    </div>
+
+    <!-- Feedback Acolhedor -->
+    <div id="emotion-feedback" style="display: none; padding: 14px; border-radius: 12px; margin-top: 15px; text-align: center; line-height: 1.5; font-size: 0.95rem;"></div>
+
+    <!-- Botão de Próxima Pergunta / Avançar -->
+    <button id="btn-next-question" class="btn-primary" style="display: none; width: 100%; margin-top: 15px;" onclick="nextEmotionQuestion()">Próxima Pergunta ➡️</button>
+    <button id="btn-to-step3" class="btn-primary" style="display: none; width: 100%; margin-top: 15px;" onclick="nextStep(3)">Avançar para Missão 3 🚀</button>
+</div>
+        <!-- ETAPA 3: RESPIRAÇÃO GUIADA (3 CICLOS) -->
+        <section id="step-3" class="step-card">
+            <span class="step-badge">Missão 3 de 5</span>
+            <h2>🌬️ Respiração em 3 Ciclos</h2>
+            <p>Acompanhe o ritmo da bolinha durante os 3 ciclos para relaxar o corpo:</p>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 190px; background: #f8fafc; border-radius: 16px; border: 2px dashed #cbd5e1; margin: 10px 0; position: relative;">
+                <span id="breath-counter" style="position: absolute; top: 10px; font-size: 0.85rem; font-weight: bold; color: #64748b;">Ciclo 0 de 3</span>
+                <div id="breath-circle" style="width: 70px; height: 70px; background: #818cf8; border-radius: 50%; transition: all 2.5s ease-in-out; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem;">
+                    Pronto?
+                </div>
+                <span id="breath-text" style="margin-top: 15px; font-weight: bold; color: #475569;">Clique para começar</span>
+            </div>
+
+            <button id="btn-breath" class="btn-primary" style="background: #0d9488;" onclick="startBreathingCycles()">Iniciar Treino de Respiração 💨</button>
+            <button id="btn-to-step4" class="btn-primary" style="display: none;" onclick="nextStep(4)">Ir para a Missão 4 ➡️</button>
+        </section>
+
+        <!-- ETAPA 4: ANCORAGEM E FOCO -->
+        <section id="step-4" class="step-card">
+            <span class="step-badge">Missão 4 de 5</span>
+            <h2>👀 Ancoragem do Olhar (Foco)</h2>
+            <p>Olhe ao seu redor no quarto ou sala e encontre **3 coisas de cor Azul ou Vermelha**:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" id="object-1" class="input-box" placeholder="1. Ex: Uma caneta">
+                <input type="text" id="object-2" class="input-box" placeholder="2. Ex: O caderno">
+                <input type="text" id="object-3" class="input-box" placeholder="3. Ex: Uma camisa">
+            </div>
+
+            <button class="btn-primary" onclick="checkFocusObjects()">Confirmar Objetos 🎯</button>
+            <div id="focus-feedback" class="feedback-msg"></div>
+            <button id="btn-to-step5" class="btn-primary" style="display: none;" onclick="nextStep(5)">Avançar para a Última Missão ➡️</button>
+        </section>
+
+        <!-- ETAPA 5: CARTÃO DA GRATIDÃO -->
+        <section id="step-5" class="step-card">
+            <span class="step-badge">Missão 5 de 5</span>
+            <h2>✨ Cartão do Pensamento Positivo</h2>
+            <p>Escreva uma coisa boa que aconteceu no seu dia de hoje:</p>
+
+            <textarea id="gratitude-text" class="input-box" style="height: 80px; resize: none;" placeholder="Ex: Branquei um nível no jogo / Comi meu lanche favorito..."></textarea>
+
+            <button class="btn-primary" style="background: #16a34a;" onclick="finishModule()">Concluir Tudo e Ganhar +100 PX! 🎉</button>
+        </section>
+    </div>
+    <!-- Adicione o Modal de Conclusão logo abaixo da Seção 5 no organizacao.html -->
+<div id="modal-conclusao" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 350px; transform: scale(0.8); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <div style="font-size: 3.5rem; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🏆</div>
+        <h2 style="color: #1e293b; margin-bottom: 8px;">Parabéns!</h2>
+        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 15px;">Você concluiu todas as 5 missões de Saúde Mental e cuidou da sua mente hoje!</p>
+        <div style="background: #fef3c7; color: #d97706; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px;">
+            +100 PX Adicionados ⚡
+        </div>
+        <button class="btn-primary" style="background: #16a34a;" onclick="redirectHome()">Voltar ao Início 🚀</button>
+    </div>
+</div>
+<style>
+@keyframes popUp {
+    to {
+        transform: scale(1);
+    }
+}
+</style>
+    <script src="sons.js"></script>
+    <script src="organizacao.js"></script>
+</body>
+</html>

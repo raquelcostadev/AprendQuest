@@ -12,22 +12,22 @@
 
         <!-- TELA 1: SPLASH / LANDING PAGE -->
         <section id="splash-screen" class="screen active">
-           <div class="hero-container">
-    <div class="logo-wrapper">
-        <img src="img/logo_tipo_aprendQuest.png" alt="AprendQuest Logo" class="brand-logo-img">
-        <span class="logo-balloon-text">Aprend<br>Quest</span>
-    </div>
-</div>
+            <div class="hero-container">
+                <div class="logo-wrapper">
+                    <img src="img/logo_tipo_aprendQuest.png" alt="AprendQuest Logo" class="brand-logo-img">
+                    <span class="logo-balloon-text">Aprend<br>Quest</span>
+                </div>
+            </div>
             
             <h1 class="splash-title">Aprenda Tecnologia Jogando</h1>
             <p class="splash-subtitle">A plataforma divertida para organizar estudos e cumprir missões diárias!</p>
             
-           <!-- Destaques dos recursos na tela inicial -->
-    <div class="features-badges">
-    <span class="badge-item">🚀 Missões</span>
-    <span class="badge-item">⚡ XP & Níveis</span>
-    <span class="badge-item">💻 Prática</span>
-  </div>
+            <!-- Destaques dos recursos na tela inicial -->
+            <div class="features-badges">
+                <span class="badge-item">🚀 Missões</span>
+                <span class="badge-item">⚡ XP & Níveis</span>
+                <span class="badge-item">💻 Prática</span>
+            </div>
             
             <button id="btn-start" type="button" class="btn-orange-lg">Bora começar</button>
         </section>
@@ -35,10 +35,9 @@
         <!-- TELA 2: LOGIN -->
         <section id="login-screen" class="screen">
             <div class="web-card">
-                <!-- LOGO CENTRALIZADA NO TOPO DO CARD -->
-        <div class="card-logo-container">
-            <img src="img/logo_tipo_aprendQuest.png" alt="AprendQuest Logo" class="card-logo-img">
-        </div>
+                <div class="card-logo-container">
+                    <img src="img/logo_tipo_aprendQuest.png" alt="AprendQuest Logo" class="card-logo-img">
+                </div>
                 
                 <h2>Acessar Plataforma</h2>
 
@@ -165,34 +164,56 @@
                         <h3 class="user-role" id="user-display-name">Aprendiz!</h3>
                     </div>
                 </div>
-                <div class="level-pill">
+                <div class="level-pill" id="user-px">
                     Nível 1 <span>100 XP</span>
                 </div>
             </div>
 
+            <!-- Card da Missão Especial / Jornada Guiada -->
             <div class="daily-mission-card">
-                <h4>Missão do dia</h4>
-                <p>Introdução à Lógica</p>
-                <button class="btn-gray-pill" id="btn-daily-start">Iniciar</button>
+                <div class="mission-badge">
+                    <span>⭐ Jornada Completa</span> • <span>+300 PX Totais</span>
+                </div>
+
+                <h3 id="daily-mission-title">Jornada de Aprendizado</h3>
+                <p id="daily-mission-desc">Comece do zero e passe por Programação, Hardware e Gestão Emocional!</p>
+
+                <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                    <!-- Redirecionamento direto para a 1ª página da trilha (programacao.html) -->
+                    <button class="btn-start-mission" onclick="startFullTrail()">
+                        <span>Começar Agora</span>
+                        <span>🚀</span>
+                    </button>
+                    
+                    <button onclick="shuffleMission()" title="Alternar Destaque" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 12px; border-radius: 50%; cursor: pointer; transition: 0.2s;">
+                        🎲
+                    </button>
+                </div>
             </div>
 
-            <h3 class="trail-title">Trilha de Aprendizado</h3>
+            <!-- Trilha de Aprendizado (Acesso Direto às Matérias) -->
+            <div class="trail-section" style="margin-top: 30px;">
+                <h3 style="text-align: center; color: #1e293b; margin-bottom: 15px;">Trilha de Aprendizado</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Card Programação -->
+                    <div class="trail-card programming" onclick="window.location.href='Quiz_programacao.html'">
+                        <div class="trail-card-title">Programação</div>
+                        <div class="trail-card-subtitle">0 / 5 Aulas</div>
+                    </div>
 
-            <div class="trail-buttons">
-                <button id="btn-trail-prog" class="btn-trail btn-blue">
-                    <strong>Programação</strong>
-                    <span>0 / 5 Aulas</span>
-                </button>
-                
-                <button id="btn-trail-hw" class="btn-trail btn-purple">
-                    <strong>Hardware</strong>
-                    <span>Conheça as peças</span>
-                </button>
-                
-                <button id="btn-trail-quiz" class="btn-trail btn-green">
-                    <strong>Desafios e Quizzes</strong>
-                    <span>Ganhe +50 XP</span>
-                </button>
+                    <!-- Card Hardware -->
+                    <div class="trail-card hardware" onclick="window.location.href='Quiz_hardware.html'">
+                        <div class="trail-card-title">Hardware</div>
+                        <div class="trail-card-subtitle">Conheça as peças</div>
+                    </div>
+
+                    <!-- Card Organização & Emoções -->
+                    <div class="trail-card emotion" onclick="window.location.href='organizacao.html'">
+                        <div class="trail-card-title">Gestão Emocional & Calma</div>
+                        <div class="trail-card-subtitle">Termômetro das Emoções e Foco</div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -207,11 +228,71 @@
                 <p>A Memória RAM guarda dados temporários em uso, e a Fonte fornece energia para tudo funcionar!</p>
             </div>
 
-            <button id="btn-start-quiz" class="btn-green-round">Iniciar Quiz de Hardware</button>
+            <button id="btn-start-quiz" type="button" class="btn-green-round">
+                Iniciar Quiz de Hardware
+            </button>
         </section>
 
     </main>
 
+    <!-- 1. EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- 2. Scripts do Menu Principal e Funções da Trilha -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pega o total de PX salvo no navegador
+            let pxSalvo = localStorage.getItem('userPX') || 100;
+
+            // Atualiza o texto do Nível/PX
+            const elementoPX = document.getElementById('user-px');
+            if (elementoPX) {
+                elementoPX.innerHTML = `Nível 1 <span>${pxSalvo} XP</span>`;
+            }
+        });
+
+        // Função para iniciar a Trilha Sequencial
+        function startFullTrail() {
+            localStorage.setItem('trilhaModo', 'guiada');
+            window.location.href = 'Quiz_programacao.html';
+        }
+
+        // Função para trocar os textos no botão do dado 🎲
+        const highlightMissions = [
+            {
+                title: "Jornada de Aprendizado",
+                desc: "Comece do zero e passe por Programação, Hardware e Gestão Emocional!"
+            },
+            {
+                title: "Módulo 1: Programação",
+                desc: "Aprenda lógica de programação com blocos e comandos divertidos!"
+            },
+            {
+                title: "Módulo 2: Hardware",
+                desc: "Descubra como o computador funciona por dentro!"
+            },
+            {
+                title: "Módulo 3: Gestão Emocional",
+                desc: "Aprenda a focar, controlar a ansiedade e organizar suas ideias!"
+            }
+        ];
+
+        let highlightIndex = 0;
+
+        function shuffleMission() {
+            highlightIndex = (highlightIndex + 1) % highlightMissions.length;
+            const titleEl = document.getElementById('daily-mission-title');
+            const descEl = document.getElementById('daily-mission-desc');
+            
+            if (titleEl && descEl) {
+                titleEl.innerText = highlightMissions[highlightIndex].title;
+                descEl.innerText = highlightMissions[highlightIndex].desc;
+            }
+        }
+    </script>
+
+    <!-- 3. Arquivo principal script.js -->
     <script src="script.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Programação - AprendQuest</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Quiz_programacao.css">
+</head>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;">
+
+    <main id="app-container" style="width: 100%; max-width: 480px; padding: 20px;">
+
+        <!-- TELA 1: INTRODUÇÃO -->
+        <section id="intro-screen" class="screen active">
+            <div class="web-card">
+                <h2 class="intro-title">Introdução à Programação</h2>
+                <p class="intro-subtitle">O que são Variáveis?</p>
+
+                <div class="intro-box">
+                    <p>Na programação, uma variável funciona como uma caixa etiquetada.</p>
+                    <p>Nós a usamos para salvar informações que o aplicativo precisa lembrar depois...</p>
+                    <p>...como seu nome, sua pontuação ou seu nível no jogo!</p>
+                </div>
+
+                <button type="button" class="btn-green-round" onclick="startQuizQuestions()">
+                    Iniciar Quiz de Programação
+                </button>
+            </div>
+        </section>
+
+        <!-- TELA 2: PERGUNTAS DO QUIZ -->
+        <section id="quiz-screen" class="screen" style="display: none !important;">
+            <div class="web-card">
+                
+                <div class="user-progress-badge">
+                    <span id="user-level" class="level-tag">Nível 1</span>
+                    <span id="user-px" class="px-tag">⚡ 100 PX</span>
+                </div>
+
+                <h2 id="quiz-question-counter" class="quiz-counter-title">Pergunta 1 de 3</h2>
+
+                <div class="progress-bar-container">
+                    <div id="quiz-progress-fill" class="progress-bar-fill" style="width: 33%;">
+                        <span id="quiz-progress-text">33%</span>
+                    </div>
+                </div>
+
+                <div id="feedback-box" class="feedback-box hidden">
+                    <span id="feedback-icon" class="feedback-icon">💡</span>
+                    <p id="feedback-text" class="feedback-text"></p>
+                </div>
+
+                <p id="quiz-question-text" class="quiz-question-text">Carregando pergunta...</p>
+
+                <div id="quiz-options-container" class="quiz-options-grid"></div>
+
+                <button id="btn-confirm-answer" type="button" class="btn-green-round" onclick="confirmAnswer()" disabled>
+                    Confirmar Resposta
+                </button>
+            </div>
+        </section>
+
+        <!-- TELA 3: FINAL / PRÓXIMO MÓDULO -->
+        <section id="result-screen" class="screen" style="display: none !important;">
+            <div class="web-card" style="text-align: center;">
+                <h2 class="intro-title">🎉 Módulo Concluído!</h2>
+                <p class="intro-subtitle">Você mandou muito bem em Programação!</p>
+
+                <div class="intro-box" style="margin: 20px 0;">
+                    <p>Você ganhou <strong>+100 PX</strong>!</p>
+                    <p>Pronto para o próximo desafio da sua jornada?</p>
+                </div>
+
+                <button type="button" class="btn-green-round" onclick="goToNextModule()">
+                    Avançar para Hardware ➡️
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="Quiz_programacao.js"></script>
+    
+    <script>
+        function startQuizQuestions() {
+            const intro = document.getElementById('intro-screen');
+            const quiz = document.getElementById('quiz-screen');
+
+            if (intro) intro.setAttribute('style', 'display: none !important;');
+            if (quiz) quiz.setAttribute('style', 'display: block !important;');
+
+            if (typeof loadQuestion === 'function') {
+                loadQuestion();
+            } else if (typeof renderQuestion === 'function') {
+                renderQuestion();
+            } else if (typeof mostrarPergunta === 'function') {
+                mostrarPergunta();
+            } else if (typeof initQuiz === 'function') {
+                initQuiz();
+            }
+        }
+
+        function goToNextModule() {
+            window.location.href = 'Quiz_hardware.html';
+        }
+    </script>
+</body>
+</html>
