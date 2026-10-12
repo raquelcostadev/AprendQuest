@@ -98,8 +98,6 @@ if (resetBackToLogin) {
 }
 
 
-
-
     // --- VERIFICAÇÃO DE PARÂMETROS DE URL ---
     const urlParams = new URLSearchParams(window.location.search);
     const screenParam = urlParams.get('screen');
@@ -188,16 +186,35 @@ e.preventDefault();
             console.error('Erro ao recuperar perfil:', profileError);
         }
 
-        // Atualiza o nome exibido no AprendQuest
-        const userDisplayName = document.getElementById('user-display-name');
+       const userDisplayName = document.getElementById('user-display-name');
 
-        if (userDisplayName && profile && profile.name) {
-            userDisplayName.textContent = profile.name;
+if (userDisplayName && profile && profile.name) {
+    userDisplayName.textContent = profile.name;
+}
+
+// Restaura o personagem salvo, se houver.
+if (profile && profile.character_name) {
+    const savedCharacterCard = Array.from(
+        document.querySelectorAll('.char-card')
+    ).find(card => card.dataset.char === profile.character_name);
+
+    if (savedCharacterCard) {
+        document.querySelectorAll('.char-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+
+        savedCharacterCard.classList.add('selected');
+
+        const emojiSpan = savedCharacterCard.querySelector('.char-emoji');
+
+        if (emojiSpan) {
+            selectedEmoji = emojiSpan.textContent;
         }
+    }
+}
 
-        // Abre a seleção de personagem por enquanto.
-        // Depois vamos recuperar o personagem salvo e o progresso.
-        navigateTo('screen-4');
+// Abre a seleção de personagem.
+navigateTo('screen-4');
 
     } catch (error) {
         console.error('Erro inesperado no login:', error);
