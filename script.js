@@ -22,6 +22,84 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    
+// --- IDENTIFICAR RECUPERAÇÃO DE SENHA ---
+window.supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+        navigateTo('reset-password-screen');
+    }
+});
+
+
+// --- SALVAR NOVA SENHA ---
+const resetPasswordForm = document.getElementById('reset-password-form');
+
+if (resetPasswordForm) {
+    resetPasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const newPassword = document.getElementById('reset-password').value;
+        const confirmPassword = document.getElementById('reset-confirm-password').value;
+        const submitButton = resetPasswordForm.querySelector('button[type="submit"]');
+
+        if (newPassword.length < 6) {
+            alert('A nova senha precisa ter pelo menos 6 caracteres.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('As senhas não são iguais. Confira e tente novamente.');
+            return;
+        }
+
+        try {
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Salvando...';
+            }
+
+            const { error } = await window.supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                console.error('Erro ao atualizar senha:', error);
+                alert('Não foi possível alterar a senha. Solicite um novo link de recuperação.');
+                return;
+            }
+
+            alert('Senha alterada com sucesso! Entre com sua nova senha.');
+
+            await window.supabaseClient.auth.signOut();
+
+            resetPasswordForm.reset();
+            navigateTo('login-screen');
+
+        } catch (error) {
+            console.error('Erro inesperado ao alterar senha:', error);
+            alert('Ocorreu um erro inesperado. Tente novamente.');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'SALVAR NOVA SENHA';
+            }
+        }
+    });
+}
+
+// --- VOLTAR AO LOGIN PELA TELA DE NOVA SENHA ---
+const resetBackToLogin = document.getElementById('reset-back-to-login');
+
+if (resetBackToLogin) {
+    resetBackToLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateTo('login-screen');
+    });
+}
+
+
+
+
     // --- VERIFICAÇÃO DE PARÂMETROS DE URL ---
     const urlParams = new URLSearchParams(window.location.search);
     const screenParam = urlParams.get('screen');
@@ -64,13 +142,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            navigateTo('screen-4');
-        });
+    // --- LOGIN REAL COM SUPABASE ---
+const loginForm = document.getElementById('login-form');
+
+if (loginForm) {
+loginForm.addEventListener('submit', async (e) => {
+e.preventDefault();
+
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+
+    if (!window.supabaseClient) {
+        alert('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
+        console.error('Cliente do Supabase não encontrado.');
+        return;
     }
+
+    try {
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Entrando...';
+        }
+
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            console.error('Erro no login:', error);
+            alert('Não foi possível entrar. Confira seu e-mail e sua senha.');
+            return;
+        }
+
+        // Recupera o perfil da pessoa autenticada
+        const { data: profile, error: profileError } =
+            await window.supabaseClient
+                .from('profiles')
+                .select('name, character_name')
+                .eq('id', data.user.id)
+                .maybeSingle();
+
+        if (profileError) {
+            console.error('Erro ao recuperar perfil:', profileError);
+        }
+
+        // Atualiza o nome exibido no AprendQuest
+        const userDisplayName = document.getElementById('user-display-name');
+
+        if (userDisplayName && profile && profile.name) {
+            userDisplayName.textContent = profile.name;
+        }
+
+        // Abre a seleção de personagem por enquanto.
+        // Depois vamos recuperar o personagem salvo e o progresso.
+        navigateTo('screen-4');
+
+    } catch (error) {
+        console.error('Erro inesperado no login:', error);
+        alert('Ocorreu um erro inesperado. Tente novamente.');
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Entrar';
+        }
+    }
+});
+
+
+}
+
 
     // --- TELA RECUPERAR SENHA ---
     const goBackToLogin = document.getElementById('go-back-to-login');
@@ -81,51 +223,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ENVIO DE E-MAIL COM EMAILJS INTEGRADO
-    const forgotForm = document.getElementById('forgot-password-form');
-    if (forgotForm) {
-        forgotForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+  // --- RECUPERAÇÃO DE SENHA COM SUPABASE ---
+const forgotForm = document.getElementById('forgot-password-form');
 
-            const emailInput = document.getElementById('forgot-email').value;
-            const btnSubmit = forgotForm.querySelector('button[type="submit"]');
-            const successMsg = document.getElementById('forgot-success-msg');
+if (forgotForm) {
+forgotForm.addEventListener('submit', async (e) => {
+e.preventDefault();
 
-            btnSubmit.disabled = true;
-            btnSubmit.innerText = "Enviando...";
 
-            const templateParams = {
-                email: emailInput,
-                to_email: emailInput,
-                user_email: emailInput,
-                link: "https://seu-site.vercel.app/redefinir-senha.html"
-            };
+    const emailInput = document.getElementById('forgot-email').value.trim();
+    const btnSubmit = forgotForm.querySelector('button[type="submit"]');
+    const successMsg = document.getElementById('forgot-success-msg');
 
-            emailjs.send("service_m8pn1zb", "template_qmlgjr6", templateParams)
-                .then(() => {
-                    if (successMsg) {
-                        successMsg.style.display = 'block';
-                        successMsg.innerHTML = `✉️ Instruções enviadas para <strong>${emailInput}</strong>! Redirecionando...`;
-                    }
-
-                    btnSubmit.innerText = "Enviado! ✨";
-
-                    setTimeout(() => {
-                        if (successMsg) successMsg.style.display = 'none';
-                        btnSubmit.disabled = false;
-                        btnSubmit.innerText = "Enviar Instruções";
-                        navigateTo('login-screen');
-                    }, 3000);
-                })
-                .catch((error) => {
-                    console.error("Erro no EmailJS:", error);
-                    alert("Erro ao enviar o e-mail. Verifique no console os detalhes ou a conta vinculada no EmailJS.");
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = "Enviar Instruções";
-                });
-        });
+    if (!window.supabaseClient) {
+        alert('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
+        return;
     }
 
+    try {
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Enviando...';
+        }
+
+        const { error } = await window.supabaseClient.auth.resetPasswordForEmail(
+            emailInput,
+            {
+                redirectTo: 'https://aprend-quest.vercel.app/'
+            }
+        );
+
+        if (error) {
+            console.error('Erro ao solicitar recuperação:', error);
+            alert('Não foi possível solicitar a recuperação. Tente novamente.');
+            return;
+        }
+
+        if (successMsg) {
+            successMsg.style.display = 'block';
+            successMsg.textContent =
+                'Se esse e-mail estiver cadastrado, você receberá as instruções para recuperar sua senha.';
+        }
+
+        alert('Solicitação enviada! Confira sua caixa de entrada e a pasta de spam.');
+
+    } catch (error) {
+        console.error('Erro inesperado na recuperação:', error);
+        alert('Ocorreu um erro inesperado. Tente novamente.');
+    } finally {
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = 'Enviar instruções';
+        }
+    }
+});
+
+
+}
+
+    
     // --- TELA 3: CADASTRO ---
     const goToLogin = document.getElementById('go-to-login');
     if (goToLogin) {
@@ -135,20 +291,108 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const userDisplayName = document.getElementById('user-display-name');
+    
+// --- CADASTRO REAL COM SUPABASE ---
 
-            if (userDisplayName && name) {
-                userDisplayName.textContent = name;
+const registerForm = document.getElementById('register-form');
+
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+        const submitButton = registerForm.querySelector('button[type="submit"]');
+
+        // Verifica se o Supabase foi inicializado.
+        if (!window.supabaseClient) {
+            alert('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
+            console.error('Cliente do Supabase não encontrado.');
+            return;
+        }
+
+        // Valida os campos.
+        if (!name || !email || !password || !confirmPassword) {
+            alert('Preencha todos os campos.');
+            return;
+        }
+
+        // Confere se as senhas são iguais.
+        if (password !== confirmPassword) {
+            alert('As senhas não são iguais. Confira e tente novamente.');
+            return;
+        }
+
+        // Evita senhas muito curtas.
+        if (password.length < 6) {
+            alert('A senha precisa ter pelo menos 6 caracteres.');
+            return;
+        }
+
+        try {
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Criando conta...';
             }
 
-            navigateTo('screen-4');
-        });
-    }
+            const { data, error } =
+                await window.supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            name: name
+                        },
+                        emailRedirectTo: 'https://aprend-quest.vercel.app/'
+                    }
+                });
+
+            if (error) {
+                console.error('Erro no cadastro:', error);
+                alert('Não foi possível criar a conta. ' + error.message);
+                return;
+            }
+
+            // Se a confirmação de e-mail estiver ativada,
+            // o usuário precisará confirmar o endereço antes de entrar.
+            if (data.user && !data.session) {
+                alert(
+                    'Conta criada! Confira seu e-mail e confirme o cadastro. ' +
+                    'Depois, volte ao AprendQuest para entrar.'
+                );
+
+                registerForm.reset();
+                navigateTo('login-screen');
+                return;
+            }
+
+            if (data.user && data.session) {
+                const userDisplayName =
+                    document.getElementById('user-display-name');
+
+                if (userDisplayName) {
+                    userDisplayName.textContent = name;
+                }
+
+                // A pessoa autenticada pode escolher seu personagem.
+                navigateTo('screen-4');
+            }
+
+        } catch (error) {
+            console.error('Erro inesperado no cadastro:', error);
+            alert('Ocorreu um erro inesperado. Tente novamente.');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'CRIAR CONTA';
+            }
+        }
+    });
+}
+
 
     // --- TELA 4: SELEÇÃO DE PERSONAGEM ---
     let selectedEmoji = '🧙‍♂️';
