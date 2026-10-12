@@ -410,17 +410,49 @@ if (registerForm) {
         });
     });
 
-    const btnConfirmChar = document.getElementById('btn-confirm-char');
-    if (btnConfirmChar) {
-        btnConfirmChar.addEventListener('click', () => {
-            const profileCircle = document.querySelector('.profile-circle');
-            if (profileCircle) {
-                profileCircle.textContent = selectedEmoji;
-            }
+   
+// --- CONFIRMAR E SALVAR PERSONAGEM ---
+const btnConfirmChar = document.getElementById('btn-confirm-char');
 
-            navigateTo('screen-5');
-        });
-    }
+if (btnConfirmChar) {
+    btnConfirmChar.addEventListener('click', async () => {
+        const selectedCard = document.querySelector('.char-card.selected');
+
+        if (!selectedCard) {
+            alert('Escolha um personagem antes de continuar!');
+            return;
+        }
+
+        const characterName = selectedCard.dataset.char;
+
+        const profileCircle = document.querySelector('.profile-circle');
+
+        if (profileCircle) {
+            profileCircle.textContent = selectedEmoji;
+        }
+
+        // Salva o personagem no perfil da criança autenticada.
+        const { data: { user } } =
+            await window.supabaseClient.auth.getUser();
+
+        if (user) {
+            const { error } = await window.supabaseClient
+                .from('profiles')
+                .update({ character_name: characterName })
+                .eq('id', user.id);
+
+            if (error) {
+                console.error('Erro ao salvar personagem:', error);
+                alert('Não foi possível salvar seu personagem. Tente novamente.');
+                return;
+            }
+        }
+
+        navigateTo('screen-5');
+    });
+}
+
+
 
     // --- TELA 5: TRILHA DE APRENDIZADO ---
     const btnTrailHw = document.getElementById('btn-trail-hw');
