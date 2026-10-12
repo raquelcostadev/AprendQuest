@@ -411,6 +411,7 @@ if (registerForm) {
     });
 
    
+
 // --- CONFIRMAR E SALVAR PERSONAGEM ---
 const btnConfirmChar = document.getElementById('btn-confirm-char');
 
@@ -424,33 +425,47 @@ if (btnConfirmChar) {
         }
 
         const characterName = selectedCard.dataset.char;
-
         const profileCircle = document.querySelector('.profile-circle');
 
         if (profileCircle) {
             profileCircle.textContent = selectedEmoji;
         }
 
-        // Salva o personagem no perfil da criança autenticada.
-        const { data: { user } } =
-            await window.supabaseClient.auth.getUser();
+        try {
+            const { data: { user }, error: userError } =
+                await window.supabaseClient.auth.getUser();
 
-        if (user) {
+            if (userError || !user) {
+                alert('Sua sessão não foi encontrada. Entre novamente na sua conta.');
+                return;
+            }
+
             const { error } = await window.supabaseClient
                 .from('profiles')
                 .update({ character_name: characterName })
                 .eq('id', user.id);
 
             if (error) {
-                console.error('Erro ao salvar personagem:', error);
+                console.error('Erro ao salvar personagem:', {
+                    message: error.message,
+                    code: error.code,
+                    details: error.details,
+                    hint: error.hint
+                });
+
                 alert('Não foi possível salvar seu personagem. Tente novamente.');
                 return;
             }
-        }
 
-        navigateTo('screen-5');
+            navigateTo('screen-5');
+
+        } catch (error) {
+            console.error('Erro inesperado ao salvar personagem:', error);
+            alert('Ocorreu um erro inesperado. Tente novamente.');
+        }
     });
 }
+
 
 
 
