@@ -1,39 +1,69 @@
-// Banco com 5 Situações do Cotidiano para a Missão 2
+// Banco com 3 situações do cotidiano para a Missão 2
+
 const emotionQuestions = [
-    {
-        id: 1,
-        text: "Quando algo atrapalha o seu dia (como a internet cair ou o jogo fechar sozinho), o que costuma se passar dentro de você?"
-    },
-    {
-        id: 2,
-        text: "Quando você se esforça muito em uma tarefa ou desenho e algo dá errado, qual é a primeira reação do seu corpo?"
-    },
-    {
-        id: 3,
-        text: "Quando alguém te interrompe no meio de algo muito legal que você estava fazendo, como você se sente?"
-    },
-    {
-        id: 4,
-        text: "Quando você tenta aprender algo novo pela primeira vez e não consegue de primeira, qual emoção aparece?"
-    },
-    {
-        id: 5,
-        text: "Quando os planos mudam de última hora e você precisa fazer outra coisa, como seu coração reage?"
-    }
+{
+id: 1,
+text: "Você está jogando ou fazendo uma atividade de que gosta, mas ela para de funcionar de repente. Como você acha que se sentiria?"
+},
+{
+id: 2,
+text: "Você tenta resolver um desafio, tenta de novo e ainda não consegue. O que poderia sentir nessa situação?"
+},
+{
+id: 3,
+text: "Você estava animado para fazer uma coisa, mas seus planos mudaram de repente. Como imagina que se sentiria?"
+}
 ];
+
 
 let currentQuestionIndex = 0;
 
-// Carrega os PX salvos e a primeira pergunta assim que a página abre
-document.addEventListener('DOMContentLoaded', () => {
-    let pxAtual = parseInt(localStorage.getItem('userPX')) || 200;
+document.addEventListener('DOMContentLoaded', async () => {
+    const supabaseClient = window.supabaseClient;
     const pxElement = document.getElementById('user-px');
+    const levelElement = document.getElementById('user-level');
+
+    if (!supabaseClient) {
+        console.error('Cliente Supabase não encontrado.');
+        return;
+    }
+
+    const { data: { user }, error: authError } =
+        await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+        console.error('Não foi possível identificar o usuário:', authError);
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from('user_progress')
+        .select('total_xp')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (error) {
+        console.error('Erro ao consultar os PX:', error);
+        return;
+    }
+
+    const pxAtual = data ? Number(data.total_xp) : 0;
+    const nivelAtual = Math.floor(pxAtual / 100) + 1;
+
+    localStorage.setItem('userPX', pxAtual);
+
     if (pxElement) {
         pxElement.innerText = `⚡ ${pxAtual} PX`;
     }
 
+    if (levelElement) {
+        levelElement.innerText = `Nível ${nivelAtual}`;
+    }
+
     loadEmotionQuestion();
 });
+
+
 
 // Função auxiliar de segurança para os sons
 function safePlaySound(soundName) {
@@ -132,11 +162,12 @@ function selectEmotion(sentimento, emoji, btnElement) {
         feedback.style.border = '1px solid #bae6fd';
 
         const mensagens = {
-            'Frustração': `${emoji} **A frustração é super normal nesses momentos!** Ela só mostra que aquilo era importante para você. Respirar fundo ajuda a desacelerar.`,
-            'Tristeza': `${emoji} **É compreensível sentir tristeza.** Guardar o sentimento não ajuda, mas fazer uma pausa ou conversar com alguém renova a mente.`,
-            'Impaciência': `${emoji} **A impaciência dá aquela vontade de agir na hora!** É o seu corpo acelerado. Parar alguns segundos te devolve o controle.`,
-            'Calma': `${emoji} **Muito bem por manter a serenidade!** Conseguir respirar e não se estressar de primeira é um ótimo superpoder.`
-        };
+'Frustração': `${emoji} Sentir frustração é normal quando algo não acontece como você esperava. Você pode fazer uma pausa e tentar novamente quando se sentir preparado.`,
+'Tristeza': `${emoji} Tudo bem sentir tristeza. Se quiser, você pode descansar, conversar com alguém de confiança ou reservar um tempinho para você.`,
+'Impaciência': `${emoji} Às vezes, dá vontade de resolver tudo rapidinho! Respirar com calma pode ajudar você a entender o que precisa neste momento.`,
+'Calma': `${emoji} Que bom perceber como você está se sentindo! Você pode aproveitar esse momento tranquilo, respeitando sempre o seu próprio ritmo.`,
+'Não sei': `${emoji} Tudo bem não saber identificar o que você sente agora. Às vezes, precisamos de um tempinho para entender nossas emoções. Você pode continuar!`
+};
 
         feedback.innerHTML = mensagens[sentimento] || `${emoji} Todas as emoções são válidas e importantes!`;
     }
@@ -157,121 +188,167 @@ function nextEmotionQuestion() {
 
 // 4. Respiração Guiada em 3 Ciclos
 function startBreathingCycles() {
-    const circle = document.getElementById('breath-circle');
-    const text = document.getElementById('breath-text');
-    const counter = document.getElementById('breath-counter');
-    const startBtn = document.getElementById('btn-breath');
-    const nextBtn = document.getElementById('btn-to-step4');
+const circle = document.getElementById('breath-circle');
+const text = document.getElementById('breath-text');
+const counter = document.getElementById('breath-counter');
+const startBtn = document.getElementById('btn-breath');
+const nextBtn = document.getElementById('btn-to-step4');
 
-    if (startBtn) startBtn.style.display = 'none';
-    let currentCycle = 1;
-    const totalCycles = 3;
+if (!circle || !text || !counter) return;
 
-    function runSingleCycle() {
-        if (counter) counter.innerText = `Ciclo ${currentCycle} de ${totalCycles}`;
-        
-        safePlaySound('breathe-in');
-        if (text) text.innerText = 'Inspire fundo pelo nariz... 🌬️';
-        if (circle) {
-            circle.style.transform = 'scale(2.2)';
-            circle.style.backgroundColor = '#22c55e';
-            circle.innerText = 'Inspire';
-        }
+if (startBtn) startBtn.style.display = 'none';
+if (nextBtn) nextBtn.style.display = 'none';
 
-        setTimeout(() => {
-            if (text) text.innerText = 'Segure o ar... ⏸️';
-            if (circle) {
-                circle.style.backgroundColor = '#eab308';
-                circle.innerText = 'Segure';
-            }
+let currentCycle = 1;
+const totalCycles = 3;
 
-            setTimeout(() => {
-                safePlaySound('breathe-out');
-                if (text) text.innerText = 'Solte devagar pela boca... 💨';
-                if (circle) {
-                    circle.style.transform = 'scale(1)';
-                    circle.style.backgroundColor = '#3b82f6';
-                    circle.innerText = 'Solte';
-                }
+// Cada ciclo tem inspiração e expiração, sem prender o ar.
+function runSingleCycle() {
+    counter.innerText = `Ciclo ${currentCycle} de ${totalCycles}`;
 
-                setTimeout(() => {
-                    if (currentCycle < totalCycles) {
-                        currentCycle++;
-                        runSingleCycle();
-                    } else {
-                        safePlaySound('success');
-                        if (text) text.innerText = 'Excelente! Você completou os 3 ciclos! ✨';
-                        if (circle) {
-                            circle.innerText = 'Relaxado!';
-                            circle.style.backgroundColor = '#818cf8';
-                        }
-                        if (nextBtn) nextBtn.style.display = 'block';
-                    }
-                }, 2500);
-
-            }, 2000);
-
-        }, 2500);
+    if (text) {
+        text.innerText = 'Inspire suavemente, se for confortável... 🌬️';
     }
 
-    runSingleCycle();
+    if (circle) {
+        circle.style.transition = 'transform 2.5s ease-in-out, background-color 0.5s ease';
+        circle.style.transform = 'scale(1.6)';
+        circle.style.backgroundColor = '#22c55e';
+        circle.innerText = 'Inspire';
+    }
+
+    safePlaySound('breathe-in');
+
+    setTimeout(() => {
+        if (text) {
+            text.innerText = 'Agora, solte o ar devagar... 💨';
+        }
+
+        if (circle) {
+            circle.style.transform = 'scale(1)';
+            circle.style.backgroundColor = '#3b82f6';
+            circle.innerText = 'Solte';
+        }
+
+        safePlaySound('breathe-out');
+
+        setTimeout(() => {
+            if (currentCycle < totalCycles) {
+                currentCycle++;
+                runSingleCycle();
+            } else {
+                safePlaySound('success');
+
+                if (text) {
+                    text.innerText = 'Muito bem! Você terminou os 3 ciclos. Continue respirando no seu ritmo! ✨';
+                }
+
+                if (circle) {
+                    circle.style.transform = 'scale(1)';
+                    circle.style.backgroundColor = '#818cf8';
+                    circle.innerText = 'Muito bem!';
+                }
+
+                if (counter) {
+                    counter.innerText = '3 ciclos concluídos!';
+                }
+
+                if (nextBtn) {
+                    nextBtn.style.display = 'block';
+                }
+            }
+        }, 2500);
+    }, 2500);
 }
+
+runSingleCycle();
+
+
+}
+
 
 // 5. Objetos de Ancoragem
 function checkFocusObjects() {
-    const obj1 = document.getElementById('object-1').value.trim();
-    const obj2 = document.getElementById('object-2').value.trim();
-    const obj3 = document.getElementById('object-3').value.trim();
     const feedback = document.getElementById('focus-feedback');
     const nextBtn = document.getElementById('btn-to-step5');
 
-    if (feedback) feedback.style.display = 'block';
+    if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#dcfce7';
+        feedback.style.color = '#15803d';
+        feedback.innerText = 'Muito bem! Observar o ambiente é uma forma de trazer sua atenção para o presente. Você pode continuar mesmo sem preencher os campos! 🎯';
+    }
 
-    if (obj1 !== '' && obj2 !== '' && obj3 !== '') {
-        safePlaySound('success');
-        if (feedback) {
-            feedback.style.backgroundColor = '#dcfce7';
-            feedback.style.color = '#15803d';
-            feedback.innerText = 'Excelente! Você trouxe sua mente de volta para o momento presente! 🎯';
-        }
-        if (nextBtn) nextBtn.style.display = 'block';
-    } else {
-        safePlaySound('click');
-        if (feedback) {
-            feedback.style.backgroundColor = '#fee2e2';
-            feedback.style.color = '#b91c1c';
-            feedback.innerText = 'Preencha os 3 campos com objetos que você consegue ver ao seu redor agora! 🔎';
-        }
+    safePlaySound('success');
+
+    if (nextBtn) {
+        nextBtn.style.display = 'block';
     }
 }
 
-// 6. Conclusão Final
-function finishModule() {
-    const textInput = document.getElementById('gratitude-text');
-    const text = textInput ? textInput.value.trim() : '';
 
-    if (text === '') {
-        alert('Escreva pelo menos uma palavrinha sobre algo bom do seu dia!');
+// 6. Conclusão Final
+async function finishModule() {
+    const supabaseClient = window.supabaseClient;
+    const modal = document.getElementById('modal-conclusao');
+    const pxElement = document.getElementById('user-px');
+    const modalTotalElement = document.getElementById('modal-total-px');
+
+    // Verifica se o Supabase está disponível
+    if (!supabaseClient) {
+        console.error('Cliente Supabase não encontrado.');
+        alert('Não foi possível conectar ao sistema de PX. Tente novamente.');
         return;
     }
 
-    let pxAtual = parseInt(localStorage.getItem('userPX')) || 200;
-    let novoPX = pxAtual + 100;
-    localStorage.setItem('userPX', novoPX);
+    // Verifica se o usuário está autenticado
+    const { data: { user }, error: authError } =
+        await supabaseClient.auth.getUser();
 
-    const pxElement = document.getElementById('user-px');
-    if (pxElement) {
-        pxElement.innerText = `⚡ ${novoPX} PX`;
+    if (authError || !user) {
+        console.error('Usuário não autenticado:', authError);
+        alert('Entre na sua conta para salvar seus PX!');
+        return;
     }
 
-    const modalTotalElement = document.getElementById('modal-total-px');
+    // Registra a conclusão e solicita os PX ao Supabase
+    const { data, error } = await supabaseClient.rpc(
+        'complete_emotional_management'
+    );
+
+    if (error || !data || !data.success) {
+        console.error('Erro ao registrar os PX:', error || data);
+        alert('Não foi possível salvar seus PX. Tente novamente.');
+        return;
+    }
+
+    // Atualiza a interface com o saldo verdadeiro do banco
+    const totalPX = Number(data.total_xp) || 0;
+    const nivel = Math.floor(totalPX / 100) + 1;
+
+    localStorage.setItem('userPX', totalPX);
+
+    if (pxElement) {
+        pxElement.innerText = `⚡ ${totalPX} PX`;
+    }
+
     if (modalTotalElement) {
-        modalTotalElement.innerText = `⚡ ${novoPX} PX`;
+        modalTotalElement.innerText = `⚡ ${totalPX} PX`;
+    }
+
+    const levelElement = document.getElementById('user-level');
+    if (levelElement) {
+        levelElement.innerText = `Nível ${nivel}`;
+    }
+
+    if (data.awarded) {
+        console.log('Gestão Emocional concluída: +100 PX salvos!');
+    } else {
+        console.log('Os PX da Gestão Emocional já foram concedidos anteriormente.');
     }
 
     safePlaySound('victory');
 
-    const modal = document.getElementById('modal-conclusao');
     if (modal) {
         modal.style.display = 'flex';
     }
@@ -284,6 +361,7 @@ function finishModule() {
         });
     }
 }
+
 
 function redirectHome() {
     window.location.href = 'index.html';

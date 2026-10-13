@@ -274,6 +274,11 @@ body {
             <span class="emoji">🧘</span>
             <span>Calma</span>
         </button>
+        <button class="mood-option-btn" onclick="selectEmotion('Não sei', '🤷', this)">
+    <span class="emoji">🤷</span>
+    <span>Não sei como me sentiria</span>
+</button>
+
     </div>
 
     <!-- Feedback Acolhedor -->
@@ -287,7 +292,8 @@ body {
         <section id="step-3" class="step-card">
             <span class="step-badge">Missão 3 de 5</span>
             <h2>🌬️ Respiração em 3 Ciclos</h2>
-            <p>Acompanhe o ritmo da bolinha durante os 3 ciclos para relaxar o corpo:</p>
+            <p>Acompanhe a bolinha por 3 ciclos. Inspire suavemente e solte o ar devagar, respeitando seu próprio ritmo. Não precisa prender a respiração. Se sentir desconforto, pare e respire normalmente. 🌬️</p>
+
             
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 190px; background: #f8fafc; border-radius: 16px; border: 2px dashed #cbd5e1; margin: 10px 0; position: relative;">
                 <span id="breath-counter" style="position: absolute; top: 10px; font-size: 0.85rem; font-weight: bold; color: #64748b;">Ciclo 0 de 3</span>
@@ -348,7 +354,12 @@ body {
     }
 }
 </style>
-    <script src="sons.js"></script>
-    <script src="organizacao.js"></script>
+   
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="sons.js"></script>
+<script src="organizacao.js"></script>
+```
+
 </body>
 </html>

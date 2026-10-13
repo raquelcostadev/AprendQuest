@@ -44,10 +44,8 @@ function playErrorSound() {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(180, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.15);
-
-        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+       gain.gain.setValueAtTime(0.25, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-
         osc.connect(gain);
         gain.connect(ctx.destination);
 
@@ -161,6 +159,36 @@ function showOverlay(icon, type) {
 function hideOverlay() {
     document.getElementById('status-overlay').className = 'status-overlay hidden';
 }
+async function awardFinalChallengeXP() {
+const supabaseClient = window.supabaseClient;
+
+
+if (!supabaseClient) {
+    console.error('Cliente Supabase não encontrado.');
+    return;
+}
+
+// Verifica o usuário autenticado
+const { data: { user }, error: authError } =
+    await supabaseClient.auth.getUser();
+
+console.log('Usuário autenticado:', user);
+console.log('Erro ao verificar usuário:', authError);
+
+// Solicita a recompensa ao Supabase
+const { data, error } = await supabaseClient.rpc(
+    'complete_final_challenge'
+);
+
+if (error) {
+    console.error('Erro completo ao registrar os PX:', error);
+    return;
+}
+console.log('Resultado da recompensa:', data);
+
+
+}
+
 
 function finishAssembly() {
     // 1. Animação de celebração na mesa
@@ -184,6 +212,7 @@ function finishAssembly() {
     }
 
     // 4. Aguarda 3.5 segundos para visualizar e exibe a Modal de Parabéns
+     awardFinalChallengeXP();
     setTimeout(() => {
         if (typeof playVictorySound === 'function') {
             playVictorySound();
@@ -197,22 +226,31 @@ function finishAssembly() {
 }
 
 // REDIRECIONAMENTO PARA A TRILHA AO CONCLUIR OU SAIR
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Captura o botão dentro da modal de parabéns ou botão de voltar da página
-    const btnReturnToTrail = document.getElementById('btn-back-to-trail') || document.getElementById('btn-finish-challenge');
-    
+
+    // Captura o botão de voltar para a trilha
+    const btnReturnToTrail =
+        document.getElementById('btn-back-to-trail') ||
+        document.getElementById('btn-finish-challenge');
+
     if (btnReturnToTrail) {
         btnReturnToTrail.addEventListener('click', () => {
             window.location.href = 'organizacao.html';
         });
     }
 
+    // Captura o botão de concluir a montagem
+    const btnFinishBuild = document.getElementById('btn-finish-build');
+
     if (btnFinishBuild) {
         btnFinishBuild.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = 'organizacao.html';
+            finishAssembly();
         });
     }
+
 });
+
 
 

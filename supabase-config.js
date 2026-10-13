@@ -15,5 +15,5 @@ window.supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
-
 console.log('Conexão do AprendQuest com o Supabase inicializada.');
+console.log('Cliente Supabase inicializado:', !!window.supabaseClient);

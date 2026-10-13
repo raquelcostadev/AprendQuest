@@ -142,10 +142,22 @@ if (resetBackToLogin) {
 
     // --- LOGIN REAL COM SUPABASE ---
 const loginForm = document.getElementById('login-form');
+const loginErrorMsg = document.getElementById('login-error-msg');
+
+function showLoginError(message) {
+    if (loginErrorMsg) {
+        loginErrorMsg.textContent = message;
+        loginErrorMsg.style.display = 'block';
+    }
+}
 
 if (loginForm) {
 loginForm.addEventListener('submit', async (e) => {
 e.preventDefault();
+if (loginErrorMsg) {
+    loginErrorMsg.textContent = '';
+    loginErrorMsg.style.display = 'none';
+}
 
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
@@ -168,11 +180,11 @@ e.preventDefault();
             password: password
         });
 
-        if (error) {
-            console.error('Erro no login:', error);
-            alert('Não foi possível entrar. Confira seu e-mail e sua senha.');
-            return;
-        }
+       if (error) {
+    console.error('Erro no login:', error);
+    showLoginError('E-mail ou senha incorretos. Confira seus dados e tente novamente.');
+    return;
+}
 
         // Recupera o perfil da pessoa autenticada
         const { data: profile, error: profileError } =
@@ -218,7 +230,7 @@ navigateTo('screen-4');
 
     } catch (error) {
         console.error('Erro inesperado no login:', error);
-        alert('Ocorreu um erro inesperado. Tente novamente.');
+        showLoginError('Ocorreu um erro inesperado. Tente novamente.');
     } finally {
         if (submitButton) {
             submitButton.disabled = false;
@@ -226,9 +238,8 @@ navigateTo('screen-4');
         }
     }
 });
-
-
 }
+
 
 
     // --- TELA RECUPERAR SENHA ---
@@ -252,11 +263,11 @@ e.preventDefault();
     const btnSubmit = forgotForm.querySelector('button[type="submit"]');
     const successMsg = document.getElementById('forgot-success-msg');
 
-    if (!window.supabaseClient) {
-        alert('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
-        return;
-    }
-
+   if (!window.supabaseClient) {
+    showLoginError('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
+    console.error('Cliente do Supabase não encontrado.');
+    return;
+}
     try {
         if (btnSubmit) {
             btnSubmit.disabled = true;
@@ -568,7 +579,7 @@ function startFullTrail() {
     if (typeof safePlaySound === 'function') safePlaySound('click');
     
     // Salva o estado de que o aluno está fazendo a Trilha Guiada Sequencial
-    localStorage.setItem('trilhaModo', 'guiada');
+     localStorage.setItem('trilhaModo', 'guiada');
     
     // Redireciona para o 1º módulo (Programação)
     window.location.href = 'programacao.html';
@@ -610,3 +621,34 @@ function shuffleMission() {
 }
 
 });
+
+// Mostrar ou ocultar a senha na tela de login
+const toggleLoginPassword = document.getElementById('toggle-login-password');
+const loginPassword = document.getElementById('login-password');
+
+if (toggleLoginPassword && loginPassword) {
+    toggleLoginPassword.addEventListener('click', () => {
+        const mostrarSenha = loginPassword.type === 'password';
+
+        loginPassword.type = mostrarSenha ? 'text' : 'password';
+
+       toggleLoginPassword.innerHTML = mostrarSenha
+    ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+         <path d="M3 3l18 18"/>
+         <path d="M10.6 10.6a2 2 0 002.8 2.8"/>
+         <path d="M9.9 5.2A10.8 10.8 0 0112 5c6.4 0 10 7 10 7a15.8 15.8 0 01-4 4.8"/>
+         <path d="M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a10.5 10.5 0 004.2-.9"/>
+       </svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+         <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+         <circle cx="12" cy="12" r="3"/>
+       </svg>`;
+
+        toggleLoginPassword.setAttribute(
+            'aria-label',
+            mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'
+        );
+
+        toggleLoginPassword.setAttribute('aria-pressed', String(mostrarSenha));
+    });
+}

@@ -227,6 +227,33 @@ body {
     font-size: 0.95rem;
 }
 
+/* Campo de senha com botão para mostrar ou ocultar */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 45px;
+    box-sizing: border-box;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 5px;
+    color: #64748b;
+}
+
 .btn-orange-lg, .btn-orange {
     width: 100%;
     background-color: var(--orange-main);
@@ -747,4 +774,16 @@ body {
 
 .btn-conclude-final:hover {
     background-color: #16A34A;
+}
+
+.auth-error-message {
+    color: #dc2626;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 1.4;
 }

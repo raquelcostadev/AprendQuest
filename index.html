@@ -42,17 +42,59 @@
                 <h2>Acessar Plataforma</h2>
 
                 <form id="login-form" class="auth-form">
-                    <div class="input-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" name="email" placeholder="seuemail@email.com" required>
-                    </div>
+                  <div class="input-group">
+    <label for="login-email">Email</label>
+    <input type="email" id="login-email" name="email" placeholder="seuemail@email.com" required>
 
-                    <div class="input-group">
-                        <label for="login-password">Senha</label>
-                        <input type="password" id="login-password" name="password" placeholder="******" required>
-                    </div>
+    <p
+        id="login-error-msg"
+        class="auth-error-message"
+        role="alert"
+        aria-live="polite"
+        style="display: none;"
+    ></p>
+</div>
+
+                   <div class="input-group">
+    <label for="login-password">Senha</label>
+
+    <div class="password-wrapper">
+        <input
+            type="password"
+            id="login-password"
+            name="password"
+            placeholder="******"
+            required
+        >
+
+        <button
+    type="button"
+    id="toggle-login-password"
+    class="toggle-password"
+    aria-label="Mostrar senha"
+    aria-pressed="false"
+>
+    <svg
+        id="eye-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+        <circle cx="12" cy="12" r="3"/>
+    </svg>
+</button>
+    </div>
+</div>
 
                     <button type="submit" class="btn-orange">Entrar</button>
+
                 </form>
 
                 <a href="#" id="go-to-forgot" class="link-muted">Esqueceu a senha?</a>
@@ -219,22 +261,20 @@
 
             <button id="btn-confirm-char" class="btn-orange-sm">Confirmar escolha</button>
         </section>
+     <section id="screen-5" class="screen">
+        <div class="dashboard-top">
+    <div class="user-greeting">
+        <div class="profile-circle"></div>
+        <div>
+            <h3>Boas-vindas,</h3>
+            <h3 class="user-role" id="user-display-name">Aprendiz!</h3>
+        </div>
+    </div>
 
-        <!-- TELA 5: TRILHA DE APRENDIZADO -->
-        <section id="screen-5" class="screen">
-            <div class="dashboard-top">
-                <div class="user-greeting">
-                    <div class="profile-circle"></div>
-                    <div>
-                        <h3>Boas-vindas,</h3>
-                        <h3 class="user-role" id="user-display-name">Aprendiz!</h3>
-                    </div>
-                </div>
-                <div class="level-pill" id="user-px">
-                    Nível 1 <span>100 XP</span>
-                </div>
-            </div>
-
+    <div class="level-pill" id="user-px">
+        Nível 1 <span>0 XP</span>
+    </div>
+</div>
             <!-- Card da Missão Especial / Jornada Guiada -->
             <div class="daily-mission-card">
                 <div class="mission-badge">
@@ -282,7 +322,6 @@
                 </div>
             </div>
         </section>
-
         <!-- TELA 6: CONTEÚDO DE HARDWARE -->
         <section id="screen-6" class="screen">
             <h2 class="lesson-title">Introdução ao Hardware</h2>
@@ -308,13 +347,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Pega o total de PX salvo no navegador
-            let pxSalvo = localStorage.getItem('userPX') || 100;
+ let pxSalvo = Number(localStorage.getItem('userPX')) || 0;
 
-            // Atualiza o texto do Nível/PX
-            const elementoPX = document.getElementById('user-px');
-            if (elementoPX) {
-                elementoPX.innerHTML = `Nível 1 <span>${pxSalvo} XP</span>`;
-            }
+// Calcula o nível com base nos PX
+ let nivelAtual = Math.floor(pxSalvo / 100) + 1;
+
+// Atualiza o texto do Nível/PX
+ const elementoPX = document.getElementById('user-px');
+
+ if (elementoPX) {
+    elementoPX.innerHTML = `Nível ${nivelAtual} <span>${pxSalvo} XP</span>`;
+}
         });
 
         // Função para iniciar a Trilha Sequencial

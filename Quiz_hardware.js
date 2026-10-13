@@ -59,8 +59,8 @@ const hardwareQuestions = [
 let currentQuestionIndex = 0;
 let selectedOptionIndex = null;
 let attemptsLeft = 2;
-let currentPX = 0;
-let currentLevel = 1;
+let currentPX = Number(localStorage.getItem('userPX')) || 0;
+let currentLevel = Math.floor(currentPX / 100) + 1;
 
 function playSound(type) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -173,7 +173,7 @@ function hideFeedback() {
     if (box) box.className = 'feedback-box hidden';
 }
 
-function confirmAnswer() {
+async function confirmAnswer() {
     if (selectedOptionIndex === null) return;
 
     const currentQuestion = hardwareQuestions[currentQuestionIndex];
@@ -186,14 +186,22 @@ function confirmAnswer() {
         selectedBtn.style.color = '#FFFFFF';
         confirmBtn.disabled = true;
 
-        playSound('success'); // Toca som de acerto
-        addExperience(20);
+playSound('success');
 
-        showFeedback("Boa! Você mandou super bem!", "🌟", "success");
+const xpSaved = await addExperience(currentQuestion.id);
 
-        setTimeout(() => {
-            nextQuestion();
-        }, 1200);
+if (!xpSaved) {
+    confirmBtn.disabled = false;
+    return;
+}
+
+showFeedback("Boa! Você mandou super bem!", "🌟", "success");
+
+setTimeout(() => {
+    nextQuestion();
+}, 1200);
+
+
 
     } else {
         attemptsLeft--;
@@ -235,27 +243,79 @@ function nextQuestion() {
         loadQuestion();
     } else {
         showFeedback("Incrível! Você concluiu a missão de Hardware!", "🏆", "success");
+        localStorage.setItem('userPX', currentPX);
         setTimeout(() => {
             window.location.href = "Desafio_final.html";
         }, 1800);
     }
 }
 
-function addExperience(points) {
-    currentPX += points;
+
+async function addExperience(questionId) {
+    const supabaseClient = window.supabaseClient;
+
+    if (!supabaseClient) {
+        console.error('Cliente Supabase não encontrado.');
+        return false;
+    }
+
+    const { data: { user }, error: authError } =
+        await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+        console.error('É necessário entrar na conta para receber PX.');
+
+        showFeedback(
+            'Entre na sua conta para salvar seus PX!',
+            '🔒',
+            'warning'
+        );
+
+        return false;
+    }
+
+    const { data, error } = await supabaseClient.rpc(
+        'complete_hardware_question',
+        { p_question_id: questionId }
+    );
+
+    if (error || !data || !data.success) {
+        console.error('Erro ao registrar os PX:', error || data);
+
+        showFeedback(
+            'Não foi possível salvar os PX. Tente novamente!',
+            '⚠️',
+            'warning'
+        );
+
+        return false;
+    }
+
+    currentPX = data.total_xp;
+    currentLevel = Math.floor(currentPX / 100) + 1;
+
     const pxTag = document.getElementById('user-px');
     const levelTag = document.getElementById('user-level');
 
-    if (currentPX >= 100) {
-        currentLevel++;
-        currentPX = currentPX - 100;
-        if (levelTag) levelTag.innerText = `Nível ${currentLevel}`;
-        showFeedback(`Subiu para o Nível ${currentLevel}! 🎉`, "⭐", "success");
+    if (pxTag) {
+        pxTag.innerText = `⚡ ${currentPX} PX`;
+        pxTag.classList.add('px-gain');
+
+        setTimeout(() => {
+            pxTag.classList.remove('px-gain');
+        }, 400);
     }
 
-    if (pxTag) {
-        pxTag.innerText = `⚡ ${currentPX} / 100 PX`;
-        pxTag.classList.add('px-gain');
-        setTimeout(() => pxTag.classList.remove('px-gain'), 400);
+    if (levelTag) {
+        levelTag.innerText = `Nível ${currentLevel}`;
     }
+
+    if (data.awarded) {
+        console.log(`Pergunta ${questionId}: +35 PX salvos!`);
+    } else {
+        console.log('Você já recebeu PX por essa pergunta.');
+    }
+
+    return true;
 }
+

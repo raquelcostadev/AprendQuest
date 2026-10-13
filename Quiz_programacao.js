@@ -140,23 +140,72 @@ function selectOption(index, btnElement) {
     document.getElementById('btn-confirm-answer').disabled = false;
 }
 
-function addExperience(points) {
-    currentPX += points;
+
+async function addExperience(questionId) {
+    const supabaseClient = window.supabaseClient;
+
+    if (!supabaseClient) {
+        console.error('Cliente Supabase não encontrado.');
+        return false;
+    }
+
+    const { data: { user }, error: authError } =
+        await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+        console.error('É necessário entrar na conta para receber PX.');
+        showFeedback(
+            'Entre na sua conta para salvar seus PX!',
+            '🔒',
+            'warning'
+        );
+        return false;
+    }
+
+    const { data, error } = await supabaseClient.rpc(
+        'complete_programming_question',
+        { p_question_id: questionId }
+    );
+
+    if (error || !data || !data.success) {
+        console.error('Erro ao registrar os PX:', error || data);
+        showFeedback(
+            'Não foi possível salvar os PX. Tente novamente!',
+            '⚠️',
+            'warning'
+        );
+        return false;
+    }
+
+    currentPX = data.total_xp;
+    currentLevel = Math.floor(currentPX / 100) + 1;
+
     const pxTag = document.getElementById('user-px');
     const levelTag = document.getElementById('user-level');
 
-    if (currentPX >= 200) {
-        currentLevel = 3;
-        if (levelTag) levelTag.innerText = `Nível ${currentLevel}`;
-        showFeedback(`Sensacional! Você alcançou o Nível ${currentLevel}! 🎉`, "⭐", "success");
+    if (pxTag) {
+        pxTag.innerText = `⚡ ${currentPX} PX`;
+        pxTag.classList.add('px-gain');
+
+        setTimeout(() => {
+            pxTag.classList.remove('px-gain');
+        }, 400);
     }
 
-    if (pxTag) {
-        pxTag.innerText = `⚡ ${currentPX} / 200 PX`;
-        pxTag.classList.add('px-gain');
-        setTimeout(() => pxTag.classList.remove('px-gain'), 400);
+    if (levelTag) {
+        levelTag.innerText = `Nível ${currentLevel}`;
     }
+
+    if (data.awarded) {
+        console.log(`Pergunta ${questionId}: +35 PX salvos!`);
+    } else {
+        console.log('Você já recebeu PX por essa pergunta.');
+    }
+
+    return true;
 }
+
+
 
 function showFeedback(text, icon, type) {
     const box = document.getElementById('feedback-box');
@@ -173,7 +222,7 @@ function hideFeedback() {
     if (box) box.className = 'feedback-box hidden';
 }
 
-function confirmAnswer() {
+async function confirmAnswer() {
     if (selectedOptionIndex === null) return;
 
     const currentQuestion = programmingQuestions[currentQuestionIndex];
@@ -182,18 +231,24 @@ function confirmAnswer() {
     const selectedBtn = optionButtons[selectedOptionIndex];
 
     if (selectedOptionIndex === currentQuestion.correctIndex) {
-        selectedBtn.style.backgroundColor = '#22C55E';
-        selectedBtn.style.color = '#FFFFFF';
-        confirmBtn.disabled = true;
+    selectedBtn.style.backgroundColor = '#22C55E';
+    selectedBtn.style.color = '#FFFFFF';
+    confirmBtn.disabled = true;
 
-        playSound('success'); // Toca som de acerto
-        addExperience(35); // +35 PX por acerto
+    playSound('success');
 
-        showFeedback("Fantástico! Resposta certa!", "🌟", "success");
+    const xpSaved = await addExperience(currentQuestion.id);
 
-        setTimeout(() => {
-            nextQuestion();
-        }, 1200);
+if (!xpSaved) {
+    confirmBtn.disabled = false;
+    return;
+}
+
+ showFeedback("Fantástico! Resposta certa!", "🌟", "success");
+
+    setTimeout(() => {
+        nextQuestion();
+    }, 1200);
 
     } else {
         attemptsLeft--;
