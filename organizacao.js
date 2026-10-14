@@ -294,10 +294,23 @@ async function finishModule() {
     const pxElement = document.getElementById('user-px');
     const modalTotalElement = document.getElementById('modal-total-px');
 
+        const pxMessage = document.getElementById('px-message');
+
+    function showPxMessage(text, isError = false) {
+        if (!pxMessage) return;
+
+        pxMessage.textContent = text;
+        pxMessage.style.display = 'block';
+        pxMessage.style.color = isError ? '#dc2626' : '#16a34a';
+    }
+
     // Verifica se o Supabase está disponível
     if (!supabaseClient) {
         console.error('Cliente Supabase não encontrado.');
-        alert('Não foi possível conectar ao sistema de PX. Tente novamente.');
+        showPxMessage(
+            'Não foi possível conectar ao sistema de PX. Tente novamente.',
+            true
+        );
         return;
     }
 
@@ -307,7 +320,7 @@ async function finishModule() {
 
     if (authError || !user) {
         console.error('Usuário não autenticado:', authError);
-        alert('Entre na sua conta para salvar seus PX!');
+        showPxMessage('Entre na sua conta para salvar seus PX!', true);
         return;
     }
 
@@ -318,7 +331,10 @@ async function finishModule() {
 
     if (error || !data || !data.success) {
         console.error('Erro ao registrar os PX:', error || data);
-        alert('Não foi possível salvar seus PX. Tente novamente.');
+        showPxMessage(
+            'Não foi possível salvar seus PX. Tente novamente.',
+            true
+        );
         return;
     }
 

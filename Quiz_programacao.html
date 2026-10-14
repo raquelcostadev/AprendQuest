@@ -33,10 +33,10 @@
         <section id="quiz-screen" class="screen" style="display: none !important;">
             <div class="web-card">
                 
-                <div class="user-progress-badge">
-                    <span id="user-level" class="level-tag">Nível 1</span>
-                    <span id="user-px" class="px-tag">⚡ 100 PX</span>
-                </div>
+               <div class="user-progress-badge">
+    <span id="user-level" class="level-tag">Nível 1</span>
+    <span id="user-px" class="px-tag">⚡ 0 PX</span>
+   </div>
 
                 <h2 id="quiz-question-counter" class="quiz-counter-title">Pergunta 1 de 3</h2>
 
@@ -94,23 +94,6 @@
 
     
     <script>
-        function startQuizQuestions() {
-            const intro = document.getElementById('intro-screen');
-            const quiz = document.getElementById('quiz-screen');
-
-            if (intro) intro.setAttribute('style', 'display: none !important;');
-            if (quiz) quiz.setAttribute('style', 'display: block !important;');
-
-            if (typeof loadQuestion === 'function') {
-                loadQuestion();
-            } else if (typeof renderQuestion === 'function') {
-                renderQuestion();
-            } else if (typeof mostrarPergunta === 'function') {
-                mostrarPergunta();
-            } else if (typeof initQuiz === 'function') {
-                initQuiz();
-            }
-        }
 
         function goToNextModule() {
             window.location.href = 'Quiz_hardware.html';

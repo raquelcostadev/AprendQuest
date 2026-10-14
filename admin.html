@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel Administrativo | AprendQuest</title>
+
+    <link rel="stylesheet" href="style.css">
+
+   <style>
+    .admin-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 40px auto;
+    }
+
+    .admin-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .admin-header h1 {
+        margin-bottom: 10px;
+    }
+
+    .admin-subtitle {
+        opacity: 0.8;
+    }
+.students-grid {
+    width: fit-content;
+    max-width: 95%;
+    margin: 30px auto;
+    overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+   .students-table {
+    width: auto;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+    /* Cabeçalho e células */
+    .students-table th,
+    .students-table td {
+        padding: 16px 12px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    /* Cabeçalho */
+    .students-table th {
+        background: #fff0d9;
+        color: #8a4b08;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    /* Coluna do personagem */
+    .students-table th:nth-child(1),
+    .students-table td:nth-child(1) {
+        width: 70px;
+        text-align: center;
+    }
+
+    /* Coluna do nome */
+    .students-table th:nth-child(2),
+    .students-table td:nth-child(2) {
+        text-align: left;
+    }
+
+    /* Coluna do nível */
+    .students-table th:nth-child(3),
+    .students-table td:nth-child(3) {
+        width: 110px;
+        text-align: left;
+        padding-left: 0;
+        white-space: nowrap;
+    }
+
+    /* Personagens */
+    .table-character {
+        font-size: 30px;
+    }
+
+    /* Nome do aluno */
+    .table-student-name {
+        color: #000000;
+        font-size: 16px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    /* Nível */
+    .table-student-level {
+        color: #8a4b08;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    /* Efeito ao passar o mouse */
+    .students-table tbody tr:hover {
+        background: #fffaf3;
+    }
+
+    /* Última linha */
+    .students-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Mensagens */
+    .admin-message {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .admin-error {
+        color: #dc2626;
+    }
+
+    /* Telas pequenas */
+    @media (max-width: 600px) {
+        .students-grid {
+            width: 95%;
+        }
+
+        .students-table th,
+        .students-table td {
+            padding: 12px 8px;
+            font-size: 14px;
+        }
+
+        .students-table th:nth-child(3),
+        .students-table td:nth-child(3) {
+            padding-left: 0;
+        }
+
+        .table-character {
+            font-size: 26px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+    <main class="admin-container">
+
+        <header class="admin-header">
+            <h1>🎮 Painel Administrativo</h1>
+            <p class="admin-subtitle">
+                Acompanhe os alunos do AprendQuest
+            </p>
+        </header>
+
+       <section
+    id="students-grid"
+    class="students-grid"
+    aria-label="Alunos cadastrados"
+>
+    <p class="admin-message">Carregando alunos...</p>
+</section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="admin.js"></script>
+
+</body>
+</html>

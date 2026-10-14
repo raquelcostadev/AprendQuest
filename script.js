@@ -32,6 +32,7 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
 
 
 // --- SALVAR NOVA SENHA ---
+
 const resetPasswordForm = document.getElementById('reset-password-form');
 
 if (resetPasswordForm) {
@@ -40,15 +41,28 @@ if (resetPasswordForm) {
 
         const newPassword = document.getElementById('reset-password').value;
         const confirmPassword = document.getElementById('reset-confirm-password').value;
+        const message = document.getElementById('reset-password-message');
         const submitButton = resetPasswordForm.querySelector('button[type="submit"]');
 
+        function showResetMessage(text, isError = false) {
+            message.textContent = text;
+            message.style.display = 'block';
+            message.style.color = isError ? '#dc2626' : '#16a34a';
+        }
+
         if (newPassword.length < 6) {
-            alert('A nova senha precisa ter pelo menos 6 caracteres.');
+            showResetMessage(
+                'A nova senha precisa ter pelo menos 6 caracteres.',
+                true
+            );
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            alert('As senhas não são iguais. Confira e tente novamente.');
+            showResetMessage(
+                'As senhas não são iguais. Confira e tente novamente.',
+                true
+            );
             return;
         }
 
@@ -58,26 +72,39 @@ if (resetPasswordForm) {
                 submitButton.textContent = 'Salvando...';
             }
 
+            message.style.display = 'none';
+
             const { error } = await window.supabaseClient.auth.updateUser({
                 password: newPassword
             });
 
             if (error) {
                 console.error('Erro ao atualizar senha:', error);
-                alert('Não foi possível alterar a senha. Solicite um novo link de recuperação.');
+
+                showResetMessage(
+                    'Não foi possível alterar a senha. Solicite um novo link de recuperação.',
+                    true
+                );
                 return;
             }
 
-            alert('Senha alterada com sucesso! Entre com sua nova senha.');
+            showResetMessage('Senha alterada com sucesso! Entre com sua nova senha.');
 
             await window.supabaseClient.auth.signOut();
 
             resetPasswordForm.reset();
-            navigateTo('login-screen');
+
+            setTimeout(() => {
+                navigateTo('login-screen');
+            }, 2000);
 
         } catch (error) {
             console.error('Erro inesperado ao alterar senha:', error);
-            alert('Ocorreu um erro inesperado. Tente novamente.');
+
+            showResetMessage(
+                'Ocorreu um erro inesperado. Tente novamente.',
+                true
+            );
         } finally {
             if (submitButton) {
                 submitButton.disabled = false;
@@ -86,7 +113,6 @@ if (resetPasswordForm) {
         }
     });
 }
-
 // --- VOLTAR AO LOGIN PELA TELA DE NOVA SENHA ---
 const resetBackToLogin = document.getElementById('reset-back-to-login');
 
@@ -163,11 +189,19 @@ if (loginErrorMsg) {
     const password = document.getElementById('login-password').value;
     const submitButton = loginForm.querySelector('button[type="submit"]');
 
-    if (!window.supabaseClient) {
-        alert('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
-        console.error('Cliente do Supabase não encontrado.');
-        return;
+   if (!window.supabaseClient) {
+    const loginErrorMsg = document.getElementById('login-error-msg');
+
+    console.error('Cliente do Supabase não encontrado.');
+
+    if (loginErrorMsg) {
+        loginErrorMsg.textContent =
+            'Não foi possível conectar ao sistema. Atualize a página e tente novamente.';
+        loginErrorMsg.style.display = 'block';
     }
+
+    return;
+}
 
     try {
         if (submitButton) {
@@ -281,23 +315,35 @@ e.preventDefault();
             }
         );
 
-        if (error) {
+                if (error) {
             console.error('Erro ao solicitar recuperação:', error);
-            alert('Não foi possível solicitar a recuperação. Tente novamente.');
+
+            if (successMsg) {
+                successMsg.style.display = 'block';
+                successMsg.style.color = '#dc2626';
+                successMsg.textContent =
+                    'Não foi possível solicitar a recuperação. Tente novamente.';
+            }
+
             return;
         }
 
         if (successMsg) {
             successMsg.style.display = 'block';
+            successMsg.style.color = '#16a34a';
             successMsg.textContent =
-                'Se esse e-mail estiver cadastrado, você receberá as instruções para recuperar sua senha.';
+                'Solicitação enviada! Se esse e-mail estiver cadastrado, você receberá as instruções. Confira também a pasta de spam.';
         }
-
-        alert('Solicitação enviada! Confira sua caixa de entrada e a pasta de spam.');
 
     } catch (error) {
         console.error('Erro inesperado na recuperação:', error);
-        alert('Ocorreu um erro inesperado. Tente novamente.');
+
+        if (successMsg) {
+            successMsg.style.display = 'block';
+            successMsg.style.color = '#dc2626';
+            successMsg.textContent =
+                'Ocorreu um erro inesperado. Tente novamente.';
+        }
     } finally {
         if (btnSubmit) {
             btnSubmit.disabled = false;
@@ -320,7 +366,7 @@ e.preventDefault();
     }
 
     
-// --- CADASTRO REAL COM SUPABASE ---
+// --- CADASTRO DE USUÁRIO ---
 
 const registerForm = document.getElementById('register-form');
 
@@ -334,29 +380,44 @@ if (registerForm) {
         const confirmPassword = document.getElementById('reg-confirm-password').value;
 
         const submitButton = registerForm.querySelector('button[type="submit"]');
+        const message = document.getElementById('register-message');
 
-        // Verifica se o Supabase foi inicializado.
+        function showRegisterMessage(text, isError = false) {
+            if (!message) return;
+
+            message.textContent = text;
+            message.style.display = 'block';
+            message.style.color = isError ? '#dc2626' : '#16a34a';
+        }
+
         if (!window.supabaseClient) {
-            alert('Não foi possível conectar ao sistema. Atualize a página e tente novamente.');
             console.error('Cliente do Supabase não encontrado.');
+
+            showRegisterMessage(
+                'Não foi possível conectar ao sistema. Atualize a página e tente novamente.',
+                true
+            );
             return;
         }
 
-        // Valida os campos.
         if (!name || !email || !password || !confirmPassword) {
-            alert('Preencha todos os campos.');
+            showRegisterMessage('Preencha todos os campos.', true);
             return;
         }
 
-        // Confere se as senhas são iguais.
         if (password !== confirmPassword) {
-            alert('As senhas não são iguais. Confira e tente novamente.');
+            showRegisterMessage(
+                'As senhas não são iguais. Confira e tente novamente.',
+                true
+            );
             return;
         }
 
-        // Evita senhas muito curtas.
         if (password.length < 6) {
-            alert('A senha precisa ter pelo menos 6 caracteres.');
+            showRegisterMessage(
+                'A senha precisa ter pelo menos 6 caracteres.',
+                true
+            );
             return;
         }
 
@@ -364,6 +425,10 @@ if (registerForm) {
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.textContent = 'Criando conta...';
+            }
+
+            if (message) {
+                message.style.display = 'none';
             }
 
             const { data, error } =
@@ -380,20 +445,20 @@ if (registerForm) {
 
             if (error) {
                 console.error('Erro no cadastro:', error);
-                alert('Não foi possível criar a conta. ' + error.message);
+
+                showRegisterMessage(
+                    'Não foi possível criar a conta. ' + error.message,
+                    true
+                );
                 return;
             }
 
-            // Se a confirmação de e-mail estiver ativada,
-            // o usuário precisará confirmar o endereço antes de entrar.
             if (data.user && !data.session) {
-                alert(
-                    'Conta criada! Confira seu e-mail e confirme o cadastro. ' +
-                    'Depois, volte ao AprendQuest para entrar.'
+                showRegisterMessage(
+                    'Conta criada! Confira seu e-mail e confirme o cadastro. Depois, volte ao AprendQuest para entrar.'
                 );
 
                 registerForm.reset();
-                navigateTo('login-screen');
                 return;
             }
 
@@ -405,13 +470,17 @@ if (registerForm) {
                     userDisplayName.textContent = name;
                 }
 
-                // A pessoa autenticada pode escolher seu personagem.
                 navigateTo('screen-4');
             }
 
         } catch (error) {
             console.error('Erro inesperado no cadastro:', error);
-            alert('Ocorreu um erro inesperado. Tente novamente.');
+
+            showRegisterMessage(
+                'Ocorreu um erro inesperado. Tente novamente.',
+                true
+            );
+
         } finally {
             if (submitButton) {
                 submitButton.disabled = false;
@@ -420,7 +489,6 @@ if (registerForm) {
         }
     });
 }
-
 
     // --- TELA 4: SELEÇÃO DE PERSONAGEM ---
     let selectedEmoji = '🧙‍♂️';
@@ -439,16 +507,27 @@ if (registerForm) {
     });
 
    
-
 // --- CONFIRMAR E SALVAR PERSONAGEM ---
 const btnConfirmChar = document.getElementById('btn-confirm-char');
 
 if (btnConfirmChar) {
     btnConfirmChar.addEventListener('click', async () => {
         const selectedCard = document.querySelector('.char-card.selected');
+        const message = document.getElementById('character-message');
+
+        function showCharacterMessage(text, isError = false) {
+            if (!message) return;
+
+            message.textContent = text;
+            message.style.display = 'block';
+            message.style.color = isError ? '#dc2626' : '#16a34a';
+        }
 
         if (!selectedCard) {
-            alert('Escolha um personagem antes de continuar!');
+            showCharacterMessage(
+                'Escolha um personagem antes de continuar!',
+                true
+            );
             return;
         }
 
@@ -460,11 +539,18 @@ if (btnConfirmChar) {
         }
 
         try {
+            if (message) {
+                message.style.display = 'none';
+            }
+
             const { data: { user }, error: userError } =
                 await window.supabaseClient.auth.getUser();
 
             if (userError || !user) {
-                alert('Sua sessão não foi encontrada. Entre novamente na sua conta.');
+                showCharacterMessage(
+                    'Sua sessão não foi encontrada. Entre novamente na sua conta.',
+                    true
+                );
                 return;
             }
 
@@ -481,7 +567,10 @@ if (btnConfirmChar) {
                     hint: error.hint
                 });
 
-                alert('Não foi possível salvar seu personagem. Tente novamente.');
+                showCharacterMessage(
+                    'Não foi possível salvar seu personagem. Tente novamente.',
+                    true
+                );
                 return;
             }
 
@@ -489,12 +578,14 @@ if (btnConfirmChar) {
 
         } catch (error) {
             console.error('Erro inesperado ao salvar personagem:', error);
-            alert('Ocorreu um erro inesperado. Tente novamente.');
+
+            showCharacterMessage(
+                'Ocorreu um erro inesperado. Tente novamente.',
+                true
+            );
         }
     });
 }
-
-
 
 
     // --- TELA 5: TRILHA DE APRENDIZADO ---

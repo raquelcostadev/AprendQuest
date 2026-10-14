@@ -181,9 +181,11 @@
             >
         </div>
 
-        <button type="submit" class="btn-orange">
-            SALVAR NOVA SENHA
-        </button>
+        <div id="reset-password-message" class="error-message" style="display: none;"></div>
+
+<button type="submit" class="btn-orange">
+    SALVAR NOVA SENHA
+</button>
     </form>
 
     <p class="footer-link" style="margin-top: 15px;">
@@ -221,7 +223,9 @@
                         <input type="password" id="reg-confirm-password" name="confirmPassword" placeholder="Repita a senha" required>
                     </div>
 
-                    <button type="submit" class="btn-orange">CRIAR CONTA</button>
+                    <div id="register-message" class="error-message" style="display: none;"></div>
+
+      <button type="submit" class="btn-orange">CRIAR CONTA</button>
                 </form>
 
                 <p class="footer-link">Já tem uma conta? <a href="#" id="go-to-login">Entrar</a></p>
@@ -260,6 +264,7 @@
             </div>
 
             <button id="btn-confirm-char" class="btn-orange-sm">Confirmar escolha</button>
+            <div id="character-message" class="error-message" style="display: none;"></div>
         </section>
      <section id="screen-5" class="screen">
         <div class="dashboard-top">

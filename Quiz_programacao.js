@@ -39,8 +39,8 @@ let selectedOptionIndex = null;
 let attemptsLeft = 2;
 
 // Inicia no Nível 2 acumulado
-let currentPX = 100;
-let currentLevel = 2;
+let currentPX = 0;
+let currentLevel = 1;
 
 function playSound(type) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -83,12 +83,73 @@ function playSound(type) {
         osc.stop(audioCtx.currentTime + 0.15);
     }
 }
+async function loadUserProgress() {
+    const supabaseClient = window.supabaseClient;
 
-function startQuizQuestions() {
-    document.getElementById('intro-screen').classList.remove('active');
-    document.getElementById('quiz-screen').classList.add('active');
-    loadQuestion();
+    if (!supabaseClient) {
+        console.error('Cliente Supabase não encontrado.');
+        return;
+    }
+
+    const { data: { user }, error: authError } =
+        await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+        console.warn('Usuário não autenticado.');
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from('user_progress')
+        .select('total_xp')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (error) {
+        console.error('Erro ao carregar o progresso:', error);
+        return;
+    }
+
+    currentPX = data?.total_xp ?? 0;
+    currentLevel = Math.floor(currentPX / 100) + 1;
+
+
+    console.log('Progresso carregado do Supabase:', data);
+console.log('PX atuais:', currentPX);
+console.log('Nível atual:', currentLevel);
+
+    const pxTag = document.getElementById('user-px');
+    const levelTag = document.getElementById('user-level');
+
+    if (pxTag) {
+        pxTag.innerText = `⚡ ${currentPX} PX`;
+    }
+
+    if (levelTag) {
+        levelTag.innerText = `Nível ${currentLevel}`;
+    }
+
+    localStorage.setItem('userPX', currentPX);
 }
+async function startQuizQuestions() {
+const intro = document.getElementById('intro-screen');
+const quiz = document.getElementById('quiz-screen');
+
+
+if (intro) {
+    intro.style.setProperty('display', 'none', 'important');
+}
+
+if (quiz) {
+    quiz.style.setProperty('display', 'block', 'important');
+}
+
+await loadUserProgress();
+loadQuestion();
+
+
+}
+
 
 function loadQuestion() {
     const q = programmingQuestions[currentQuestionIndex];
