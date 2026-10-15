@@ -490,21 +490,72 @@ if (registerForm) {
     });
 }
 
-    // --- TELA 4: SELEÇÃO DE PERSONAGEM ---
-    let selectedEmoji = '🧙‍♂️';
+   // --- SELEÇÃO E PRÉVIA DOS PERSONAGENS ---
 
-    const charCards = document.querySelectorAll('.char-card');
-    charCards.forEach(card => {
-        card.addEventListener('click', () => {
-            charCards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            
-            const emojiSpan = card.querySelector('.char-emoji');
-            if (emojiSpan) {
-                selectedEmoji = emojiSpan.textContent;
-            }
-        });
-    });
+let selectedEmoji = '🧙‍♂️';
+
+const charCards = document.querySelectorAll('.char-card');
+
+const avatarPreviewEmoji = document.getElementById('avatar-preview-emoji');
+const avatarPreviewImage = document.getElementById('avatar-preview-image');
+const avatarPreviewName = document.getElementById('avatar-preview-name');
+
+charCards.forEach(card => {
+    card.addEventListener('click', () => {
+
+        // Marca o personagem selecionado.
+        charCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        // Obtém o nome e o emoji do personagem.
+        const emojiSpan = card.querySelector('.char-emoji');
+
+        if (emojiSpan) {
+            selectedEmoji = emojiSpan.textContent;
+        }
+
+        const characterName = card.dataset.char;
+        // Atualiza o fundo conforme o personagem selecionado.
+const customizationScreen = document.getElementById('screen-4');
+
+if (customizationScreen) {
+customizationScreen.classList.remove(
+'fundo-mago',
+'fundo-cavalheiro',
+'fundo-cientista',
+'fundo-astronauta',
+'fundo-programadora',
+'fundo-hacker'
+);
+
+
+const nomeFundo = characterName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+
+customizationScreen.classList.add(`fundo-${nomeFundo}`);
+
+
+}
+
+
+        // Atualiza o nome na prévia.
+        if (avatarPreviewName) {
+            avatarPreviewName.textContent = characterName;
+        }
+
+        // Exibe o emoji do personagem selecionado.
+if (avatarPreviewImage) {
+avatarPreviewImage.style.display = 'none';
+avatarPreviewImage.removeAttribute('src');
+}
+
+if (avatarPreviewEmoji) {
+avatarPreviewEmoji.textContent = selectedEmoji;
+avatarPreviewEmoji.style.display = 'block';
+}
+
 
    
 // --- CONFIRMAR E SALVAR PERSONAGEM ---
@@ -742,4 +793,266 @@ if (toggleLoginPassword && loginPassword) {
 
         toggleLoginPassword.setAttribute('aria-pressed', String(mostrarSenha));
     });
+
+
+    // ==========================================
+// LOJA DE ACESSÓRIOS DO APRENDQUEST
+// ==========================================
+
+const shopItems = document.querySelectorAll('.shop-item');
+const equippedAccessories = document.getElementById('equipped-accessories');
+const shopMessage = document.getElementById('shop-message');
+
+const accessoryIcons = {
+    oculos: '👓',
+    chapeu: '🧢',
+    coroa: '👑',
+    mochila: '🎒'
+};
+
+let ownedAccessories = [];
+let shopBusy = false;
+
+function showShopMessage(message, isError = false) {
+    if (!shopMessage) return;
+
+    shopMessage.textContent = message;
+    shopMessage.style.color = isError ? '#dc2626' : '#15803d';
 }
+
+function updateShopXp(totalXp) {
+    const xpElement = document.getElementById('user-px');
+
+    if (!xpElement) return;
+
+    // Mantém a estrutura do indicador de nível da tela inicial.
+    const xpSpan = xpElement.querySelector('span');
+
+    if (xpSpan) {
+        xpSpan.textContent = `${totalXp} XP`;
+
+        const level = Math.floor(totalXp / 100) + 1;
+        xpElement.firstChild.textContent = `Nível ${level} `;
+    } else {
+        xpElement.textContent = `⚡ ${totalXp} PX`;
+    }
+
+    localStorage.setItem('userPX', totalXp);
+}
+
+function renderEquippedAccessories() {
+if (!equippedAccessories) return;
+equippedAccessories.innerHTML = '';
+
+const selectedCharacter = document
+    .getElementById('avatar-preview-name')
+    ?.textContent
+    .trim()
+    .toLowerCase();
+
+equippedAccessories.dataset.character = selectedCharacter || '';
+
+const equippedItems = ownedAccessories.filter(item => item.equipped);
+
+equippedItems.forEach(item => {
+    const accessory = document.createElement('span');
+
+    accessory.className = `equipped-accessory accessory-${item.item_name}`;
+    accessory.textContent = accessoryIcons[item.item_name] || '✨';
+    accessory.title = item.item_name;
+
+    equippedAccessories.appendChild(accessory);
+});
+
+
+}
+
+
+function renderShopButtons() {
+    shopItems.forEach(button => {
+        const itemName = button.dataset.item;
+        const price = Number(button.dataset.price);
+
+        const item = ownedAccessories.find(
+            accessory => accessory.item_name === itemName
+        );
+
+        const status = button.querySelector('strong');
+
+        if (!status) return;
+
+        button.disabled = shopBusy;
+
+        if (!item) {
+            status.textContent = price === 0 ? 'Grátis' : `${price} PX`;
+            button.classList.remove('item-owned', 'item-equipped');
+            button.setAttribute('aria-label', `Comprar ${itemName}`);
+            return;
+        }
+
+        if (item.equipped) {
+            status.textContent = 'Equipado ✓';
+            button.classList.add('item-owned', 'item-equipped');
+            button.setAttribute('aria-label', `Remover ${itemName}`);
+        } else {
+            status.textContent = 'Equipar';
+            button.classList.add('item-owned');
+            button.classList.remove('item-equipped');
+            button.setAttribute('aria-label', `Equipar ${itemName}`);
+        }
+    });
+}
+
+async function loadShop() {
+    const supabaseClient = window.supabaseClient;
+
+    if (!supabaseClient) {
+        showShopMessage('Não foi possível conectar à loja.', true);
+        return;
+    }
+
+    const {
+        data: { user },
+        error: authError
+    } = await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+        showShopMessage('Entre na sua conta para acessar a loja.', true);
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from('user_items')
+        .select('item_name, equipped')
+        .eq('user_id', user.id);
+
+    if (error) {
+        console.error('Erro ao carregar acessórios:', error);
+        showShopMessage('Não foi possível carregar seus acessórios.', true);
+        return;
+    }
+
+    ownedAccessories = data || [];
+
+    renderEquippedAccessories();
+    renderShopButtons();
+}
+
+async function handleShopItem(button) {
+    if (shopBusy) return;
+
+    const itemName = button.dataset.item;
+    const price = Number(button.dataset.price);
+
+    const existingItem = ownedAccessories.find(
+        item => item.item_name === itemName
+    );
+
+    const supabaseClient = window.supabaseClient;
+
+    if (!supabaseClient) {
+        showShopMessage('Não foi possível conectar à loja.', true);
+        return;
+    }
+
+    shopBusy = true;
+    renderShopButtons();
+
+    try {
+        // Se o acessório já foi comprado, apenas alterna seu equipamento.
+        if (existingItem) {
+            const { data: { user }, error: authError } =
+                await supabaseClient.auth.getUser();
+
+            if (authError || !user) {
+                showShopMessage('Entre na sua conta novamente.', true);
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from('user_items')
+                .update({ equipped: !existingItem.equipped })
+                .eq('user_id', user.id)
+                .eq('item_name', itemName);
+
+            if (error) {
+                console.error('Erro ao atualizar acessório:', error);
+                showShopMessage('Não foi possível atualizar o acessório.', true);
+                return;
+            }
+
+            await loadShop();
+
+            showShopMessage(
+                existingItem.equipped
+                    ? 'Acessório removido!'
+                    : 'Acessório equipado!'
+            );
+
+            return;
+        }
+
+        // Compra realizada pelo banco de dados.
+        const { data, error } = await supabaseClient.rpc(
+            'purchase_shop_item',
+            { p_item_name: itemName }
+        );
+
+        if (error) {
+            console.error('Erro na compra:', error);
+            showShopMessage('Não foi possível realizar a compra.', true);
+            return;
+        }
+
+        if (!data || !data.success) {
+            showShopMessage(
+                data?.message || 'Não foi possível realizar a compra.',
+                true
+            );
+            return;
+        }
+
+        updateShopXp(data.total_xp);
+
+        // Atualiza o inventário depois da compra.
+        await loadShop();
+
+        showShopMessage(
+            price === 0
+                ? 'Acessório adicionado à sua coleção!'
+                : `Compra realizada! Você gastou ${price} PX.`
+        );
+
+    } catch (error) {
+        console.error('Erro inesperado na loja:', error);
+        showShopMessage('Ocorreu um erro. Tente novamente.', true);
+
+    } finally {
+        shopBusy = false;
+        renderShopButtons();
+    }
+}
+
+shopItems.forEach(button => {
+    button.addEventListener('click', () => {
+        handleShopItem(button);
+    });
+});
+
+// Carrega a coleção ao abrir a tela de personalização.
+const customizationScreen = document.getElementById('screen-4');
+
+if (customizationScreen) {
+    const observer = new MutationObserver(() => {
+        if (customizationScreen.classList.contains('active')) {
+            loadShop();
+        }
+    });
+
+    observer.observe(customizationScreen, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
+}})
+})

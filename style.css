@@ -43,7 +43,7 @@ body {
     width: 100%;
 }
 
-.screen.active {
+ .screen.active{
     display: flex !important;
 }
 
@@ -786,4 +786,854 @@ body {
     font-size: 0.9rem;
     text-align: center;
     line-height: 1.4;
+}
+/* ========================================
+   PERSONALIZAÇÃO DE PERSONAGEM - APRENDQUEST
+======================================== */
+
+.customization-screen {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 24px;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #e8f5ff, #f4edff, #fff4df);
+    text-align: center;
+    overflow-x: hidden;
+}
+
+.customization-screen .title-select {
+    margin: 0 0 25px;
+    color: #263568;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 800;
+}
+
+/* Organização dos três painéis */
+
+.customization-layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr) 300px;
+    gap: 24px;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto 30px;
+    align-items: start;
+    box-sizing: border-box;
+}
+
+/* Painéis laterais */
+
+.character-panel,
+.shop-panel {
+    padding: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 8px 22px rgba(53, 67, 130, 0.10);
+}
+
+.character-panel h3,
+.shop-panel h3 {
+    margin: 0 0 18px;
+    color: #344477;
+    font-size: 20px;
+}
+
+/* Seleção de personagens */
+
+.customization-screen .character-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.customization-screen .char-card {
+    min-width: 0;
+    padding: 10px 5px;
+    border: 2px solid #e4e9fa;
+    border-radius: 17px;
+    background: #f7f8ff;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s,
+                box-shadow 0.2s;
+}
+
+.customization-screen .char-card:hover {
+    transform: translateY(-3px);
+    border-color: #9b8afc;
+}
+
+.customization-screen .char-card.selected {
+    border-color: #7965ed;
+    background: #eeeaff;
+    box-shadow: 0 0 0 3px rgba(121, 101, 237, 0.12);
+}
+
+.customization-screen .char-box {
+    display: flex;
+    min-height: 55px;
+    justify-content: center;
+    align-items: center;
+}
+
+.customization-screen .char-emoji {
+    font-size: 36px;
+}
+
+.customization-screen .char-name {
+    display: block;
+    margin-top: 5px;
+    color: #35416b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Visualização central do personagem */
+
+.avatar-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    max-width: 340px;
+    min-width: 0;
+    min-height: 280px;
+
+    margin: 0 auto;
+    padding: 24px 16px;
+
+    box-sizing: border-box;
+
+    border: 2px solid #8b7be8;
+    border-radius: 20px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(240, 235, 255, 0.96),
+        rgba(225, 239, 255, 0.96)
+    );
+
+    box-shadow: 0 6px 18px rgba(65, 45, 130, 0.15);
+}
+
+.avatar-preview {
+    display: flex;
+    position: relative;
+    width: min(280px, 100%);
+    height: 320px;
+    min-height: 0;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    animation: none;
+}
+
+
+#avatar-preview-emoji {
+    display: block;
+    position: relative;
+    z-index: 2;
+
+    font-size: 90px;
+    line-height: 1.4;
+
+    width: 100%;
+    text-align: center;
+    white-space: normal;
+
+    overflow: visible;
+}
+/* Ilustração do personagem */
+.avatar-character-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 400px;
+
+    object-fit: contain;
+    object-position: center bottom;
+}
+
+#avatar-preview-name {
+    display: block;
+    position: relative;
+    margin: 12px 0 4px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a2340;
+}
+.avatar-panel p {
+    margin: 5px 0 0;
+    color: #59658b;
+    font-size: 15px;
+}
+
+/* Animação suave */
+
+@keyframes avatar-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Loja de roupas e acessórios */
+
+.shop-description {
+    margin: -5px 0 18px;
+    color: #68718f;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.shop-items {
+    display: grid;
+    gap: 12px;
+}
+
+.shop-item {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border: 2px solid #e7eaff;
+    border-radius: 16px;
+    background: #f9faff;
+    color: #344477;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s,
+                background 0.2s;
+}
+
+.shop-item:hover {
+    transform: translateY(-2px);
+    border-color: #a99aff;
+    background: #f0edff;
+}
+
+.shop-item-icon {
+    grid-row: 1 / 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
+
+.shop-item > span:nth-child(2) {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.shop-item strong {
+    margin-top: 4px;
+    color: #5a50bd;
+    font-size: 12px;
+}
+
+#shop-message {
+    min-height: 20px;
+    margin: 12px 0 0;
+    color: #344477;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Botão de continuar */
+
+#btn-confirm-char {
+    min-width: 240px;
+    padding: 16px 28px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ff9f43, #ff742e);
+    box-shadow: 0 6px 0 #db5b24;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#btn-confirm-char:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #db5b24;
+}
+
+#btn-confirm-char:active {
+    transform: translateY(3px);
+    box-shadow: 0 3px 0 #db5b24;
+}
+
+/* Adaptação para telas menores */
+
+@media (max-width: 1100px) {
+    .customization-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .avatar-panel {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        min-height: 320px;
+    }
+
+    .character-panel {
+        grid-column: 1;
+    }
+
+    .shop-panel {
+        grid-column: 2;
+    }
+}
+
+@media (max-width: 520px) {
+    .customization-screen {
+        padding: 22px 12px;
+    }
+
+    .customization-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .avatar-panel {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .character-panel,
+    .shop-panel {
+        padding: 16px;
+    }
+
+    #btn-confirm-char {
+        width: 100%;
+        min-width: 0;
+    }
+}
+/* Amplia o espaço somente na tela de personalização */
+#app-container:has(#screen-4.active) {
+    max-width: none;
+    width: 100%;
+}
+#avatar-preview-name {
+    display: block;
+    margin: 8px 0 0;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a2340;
+}
+/* AJUSTES DA TELA DE PERSONALIZAÇÃO */
+#screen-4.customization-screen {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 24px;
+    box-sizing: border-box;
+
+    background: linear-gradient(
+        135deg,
+        #e8f5ff,
+        #f4edff,
+        #fff4df
+    );
+
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ACESSÓRIOS EQUIPADOS NA PRÉVIA DO PERSONAGEM */
+
+.avatar-preview {
+    position: relative;
+}
+
+.equipped-accessories {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    min-height: 0;
+}
+
+.equipped-accessories:empty {
+    display: none;
+}
+
+.equipped-accessory {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    padding: 6px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+/* ÓCULOS POSICIONADOS SOBRE O ROSTO DO EMOJI */
+.avatar-preview {
+    position: relative;
+}
+
+.equipped-accessory.accessory-oculos {
+    position: absolute;
+    top: 49%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    font-size: 2.2rem;
+    pointer-events: none;
+}
+.equipped-accessory.accessory-chapeu {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    font-size: 2.2rem;
+    pointer-events: none;
+}
+/* COROA SOBRE A CABEÇA DO PERSONAGEM */
+.equipped-accessory.accessory-coroa {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+
+    font-size: 2.2rem;
+    pointer-events: none;
+}
+/* NOVO VISUAL DO PAINEL DO PERSONAGEM */
+#screen-4 .avatar-panel {
+    justify-self: center;
+    align-self: start;
+
+    width: 100%;
+    max-width: 320px;
+    min-height: auto;
+
+    padding: 20px 16px;
+
+    border: 2px solid #c7b8ff;
+    border-radius: 22px;
+
+    background: linear-gradient(
+        145deg,
+        #f5f0ff,
+        #eaf5ff
+    );
+
+    box-shadow: 0 5px 16px rgba(74, 56, 130, 0.12);
+}
+
+/* ÁREA DO PERSONAGEM */
+#screen-4 .avatar-preview {
+    width: 100%;
+    max-width: 240px;
+    height: 240px;
+    flex-shrink: 0;
+
+    border: 2px solid rgba(139, 123, 232, 0.35);
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.65);
+}
+/* CARD EXTERNO DA PERSONALIZAÇÃO */
+#screen-4.customization-screen {
+    width: calc(100% - 40px);
+    max-width: 1600px;
+    min-height: auto;
+
+    margin: 20px auto;
+    padding: 30px 24px;
+
+    box-sizing: border-box;
+
+    border: 3px solid #c7b8ff;
+    border-radius: 28px;
+
+    background: linear-gradient(
+        135deg,
+        #eee7ff,
+        #e5f4ff
+    );
+
+    box-shadow: 0 8px 28px rgba(65, 45, 130, 0.14);
+}
+/* Moldura decorativa do card de personalização */
+#screen-4.customization-screen {
+border: 3px solid #c7b8ff;
+outline: 3px solid rgba(139, 123, 232, 0.35);
+outline-offset: 5px;
+border-radius: 28px;
+box-shadow:
+0 0 0 9px rgba(255, 255, 255, 0.65),
+0 8px 25px rgba(65, 45, 130, 0.16);
+}
+/* Botão Começar Minha Aventura */
+#screen-4 #btn-confirm-char {
+display: block;
+position: relative;
+top: -90px;
+margin: 0 auto -32px;
+z-index: 10;
+padding: 14px 32px;
+background: linear-gradient(135deg, #8065e8, #5b7cfa);
+color: #ffffff;
+border: 2px solid #ffffff;
+border-radius: 16px;
+box-shadow: 0 5px 14px rgba(91, 92, 226, 0.25);
+font-weight: 700;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efeito ao passar o mouse */
+#screen-4 #btn-confirm-char:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 18px rgba(91, 92, 226, 0.35);
+}
+#screen-4 #btn-confirm-char {
+margin-top: 2px;
+align-self: center;
+}
+/* Posição dos óculos em cada personagem */
+
+/* Mago — mantém a altura atual */
+#equipped-accessories[data-character="mago"] .accessory-oculos {
+top: 49%;
+}
+
+/* Cavalheiro */
+#equipped-accessories[data-character="cavalheiro"] .accessory-oculos {
+top: 44%;
+}
+
+/* Cientista */
+#equipped-accessories[data-character="cientista"] .accessory-oculos {
+top: 44%;
+}
+
+/* Astronauta */
+#equipped-accessories[data-character="astronauta"] .accessory-oculos {
+top: 44%;
+}
+
+/* Programadora */
+#equipped-accessories[data-character="programadora"] .accessory-oculos {
+top: 50%;
+}
+
+/* Hacker */
+#equipped-accessories[data-character="hacker"] .accessory-oculos {
+top: 44%;
+}
+
+/* Ajuste dos óculos no Cavalheiro */
+#equipped-accessories[data-character="cavalheiro"] .accessory-oculos {
+font-size: 2.8rem;
+}
+
+/* Fundos da tela de personalização por personagem */
+
+/* Mago — mágico e lilás */
+#screen-4.customization-screen.fundo-mago {
+background: linear-gradient(135deg, #eee3ff, #dcd5ff, #f5eaff);
+}
+
+/* Cavalheiro — azul e dourado */
+#screen-4.customization-screen.fundo-cavalheiro {
+background: linear-gradient(135deg, #e1edff, #fff0c9, #e8f2ff);
+}
+
+/* Cientista — turquesa */
+#screen-4.customization-screen.fundo-cientista {
+background: linear-gradient(135deg, #d8fff5, #d9f4ff, #e9fffa);
+}
+
+/* Astronauta — espacial */
+#screen-4.customization-screen.fundo-astronauta {
+background: linear-gradient(135deg, #172554, #334a8c, #5c4c99);
+}
+
+/* Programadora — tecnológico */
+#screen-4.customization-screen.fundo-programadora {
+background: linear-gradient(135deg, #dceaff, #c9d7ff, #e8e2ff);
+}
+
+/* Hacker — verde e azul escuro */
+#screen-4.customization-screen.fundo-hacker {
+background: linear-gradient(135deg, #d8fbe4, #c8f4ed, #dceaff);
+}
+
+/* =====================================
+   CENÁRIO TEMÁTICO — MAGO
+===================================== */
+
+#screen-4.customization-screen.fundo-mago {
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(255, 255, 255, 0.85) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 80% 15%,
+            rgba(255, 223, 130, 0.9) 0 3px,
+            transparent 4px
+        ),
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(255, 255, 255, 0.8) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(195, 165, 255, 0.8) 0 4px,
+            transparent 5px
+        ),
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(125, 85, 220, 0.35),
+            transparent 60%
+        ),
+        linear-gradient(
+            135deg,
+            #211447,
+            #49317d,
+            #29205c
+        );
+
+    background-size:
+        100px 100px,
+        140px 140px,
+        120px 120px,
+        160px 160px,
+        100% 100%,
+        100% 100%;
+
+    transition: background 0.4s ease;
+}
+/* Título da personalização */
+#screen-4 .customization-title,
+#screen-4 h1 {
+    color: #ffffff;
+    text-shadow:
+        0 2px 4px rgba(20, 10, 50, 0.8),
+        0 0 12px rgba(190, 165, 255, 0.6);
+}
+
+/* =====================================
+   CENÁRIO — CAVALHEIRO
+   Reino encantado e detalhes dourados
+===================================== */
+
+#screen-4.customization-screen.fundo-cavalheiro {
+    background:
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(255, 207, 100, 0.4),
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(255, 224, 145, 0.9) 0 3px,
+            transparent 4px
+        ),
+        radial-gradient(
+            circle at 85% 25%,
+            rgba(255, 255, 255, 0.8) 0 2px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            45deg,
+            transparent 0 55px,
+            rgba(255, 255, 255, 0.05) 56px 58px
+        ),
+        linear-gradient(
+            135deg,
+            #18365d,
+            #416b91,
+            #b58a4b
+        );
+}
+
+
+/* =====================================
+   CENÁRIO — CIENTISTA
+   Laboratório e moléculas
+===================================== */
+
+#screen-4.customization-screen.fundo-cientista {
+    background:
+        radial-gradient(
+            circle at 20% 25%,
+            rgba(255, 255, 255, 0.95) 0 4px,
+            transparent 5px
+        ),
+        radial-gradient(
+            circle at 25% 30%,
+            rgba(100, 255, 220, 0.8) 0 3px,
+            transparent 4px
+        ),
+        radial-gradient(
+            circle at 75% 70%,
+            rgba(120, 230, 255, 0.8) 0 4px,
+            transparent 5px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 65px,
+            rgba(255, 255, 255, 0.06) 66px 68px
+        ),
+        linear-gradient(
+            135deg,
+            #073b4c,
+            #087e8b,
+            #163b70
+        );
+}
+
+
+/* =====================================
+   CENÁRIO — ASTRONAUTA
+   Espaço, estrelas e planetas
+===================================== */
+
+#screen-4.customization-screen.fundo-astronauta {
+    background:
+        radial-gradient(
+            circle at 75% 25%,
+            #e6d5ff 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 75% 25%,
+            rgba(180, 135, 255, 0.45) 0 20px,
+            transparent 22px
+        ),
+        radial-gradient(
+            circle at 20% 70%,
+            rgba(255, 255, 255, 0.9) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(120, 160, 255, 0.9) 0 5px,
+            transparent 6px
+        ),
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(93, 65, 190, 0.5),
+            transparent 55%
+        ),
+        linear-gradient(
+            135deg,
+            #080f2d,
+            #192d63,
+            #34245f
+        );
+}
+
+
+/* =====================================
+   CENÁRIO — PROGRAMADORA
+   Tecnologia, circuitos e telas
+===================================== */
+
+#screen-4.customization-screen.fundo-programadora {
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(125, 220, 255, 0.9) 0 3px,
+            transparent 4px
+        ),
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(180, 160, 255, 0.9) 0 3px,
+            transparent 4px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 38px,
+            rgba(115, 190, 255, 0.12) 39px 41px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 38px,
+            rgba(115, 190, 255, 0.12) 39px 41px
+        ),
+        linear-gradient(
+            135deg,
+            #101c46,
+            #253c78,
+            #49366f
+        );
+}
+
+
+/* =====================================
+   CENÁRIO — HACKER
+   Rede digital e códigos
+===================================== */
+
+#screen-4.customization-screen.fundo-hacker {
+    background:
+        radial-gradient(
+            circle at 20% 25%,
+            rgba(105, 255, 150, 0.9) 0 3px,
+            transparent 4px
+        ),
+        radial-gradient(
+            circle at 80% 65%,
+            rgba(105, 255, 150, 0.8) 0 3px,
+            transparent 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 30px,
+            rgba(70, 255, 130, 0.08) 31px 33px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 45px,
+            rgba(70, 255, 130, 0.07) 46px 48px
+        ),
+        linear-gradient(
+            135deg,
+            #061b19,
+            #103c32,
+            #10264a
+        );
 }

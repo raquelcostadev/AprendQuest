@@ -231,41 +231,151 @@
                 <p class="footer-link">Já tem uma conta? <a href="#" id="go-to-login">Entrar</a></p>
             </div>
         </section>
+           <!-- INÍCIO DA TELA DE PERSONALIZAÇÃO -->
+<section id="screen-4" class="screen customization-screen">
 
-        <!-- TELA 4: SELEÇÃO DE PERSONAGEM -->
-        <section id="screen-4" class="screen">
-            <h2 class="title-select">Escolha o seu personagem</h2>
-            
+    <h2 class="title-select">✨ Crie seu personagem! ✨</h2>
+
+    <div class="customization-layout">
+
+        <!-- PERSONAGENS À ESQUERDA -->
+        <aside class="character-panel">
+            <h3>🎭 Personagens</h3>
+
             <div class="character-grid">
+
                 <div class="char-card selected" data-char="Mago">
-                    <div class="char-box"><span class="char-emoji">🧙‍♂️</span></div>
+                    <div class="char-box">
+                        <span class="char-emoji">🧙‍♂️</span>
+                    </div>
                     <span class="char-name">Mago</span>
                 </div>
+
                 <div class="char-card" data-char="Cavalheiro">
-                    <div class="char-box"><span class="char-emoji">⚔️</span></div>
+                    <div class="char-box">
+                        <span class="char-emoji">⚔️</span>
+                    </div>
                     <span class="char-name">Cavalheiro</span>
                 </div>
+
                 <div class="char-card" data-char="Cientista">
-                    <div class="char-box"><span class="char-emoji">🧪</span></div>
+                    <div class="char-box">
+                        <span class="char-emoji">🧪</span>
+                    </div>
                     <span class="char-name">Cientista</span>
                 </div>
+
                 <div class="char-card" data-char="Astronauta">
-                    <div class="char-box"><span class="char-emoji">👩‍🚀</span></div>
+                    <div class="char-box">
+                        <span class="char-emoji">👩‍🚀</span>
+                    </div>
                     <span class="char-name">Astronauta</span>
                 </div>
+
                 <div class="char-card" data-char="Programadora">
-                    <div class="char-box"><span class="char-emoji">🤖</span></div>
+                    <div class="char-box">
+                        <span class="char-emoji">🤖</span>
+                    </div>
                     <span class="char-name">Programadora</span>
                 </div>
+
                 <div class="char-card" data-char="Hacker">
-                    <div class="char-box"><span class="char-emoji">👨‍💻</span></div>
+                    <div class="char-box">
+                        <span class="char-emoji">👨‍💻</span>
+                    </div>
                     <span class="char-name">Hacker</span>
                 </div>
+
+            </div>
+        </aside>
+
+       
+    <!-- PERSONAGEM SELECIONADO NO CENTRO -->
+    <div class="avatar-panel">
+       ```html
+<div class="avatar-preview">
+    <img
+        id="avatar-preview-image"
+        src="img/personagens/astronauta.png"
+        alt="Personagem selecionado do AprendQuest"
+        class="avatar-character-image"
+        style="display: none;"
+    >
+
+    <span id="avatar-preview-emoji">🧙‍♂️</span>
+
+    <div
+        id="equipped-accessories"
+        class="equipped-accessories"
+        aria-label="Acessórios equipados"
+    ></div>
+</div>
+
+
+
+        <h3 id="avatar-preview-name">Mago</h3>
+        <p>Seu herói, suas regras! 🌟</p>
+    </div>
+
+
+
+        <!-- LOJA À DIREITA -->
+        <aside class="shop-panel">
+
+            <h3>👕 Loja de itens</h3>
+
+            <p class="shop-description">
+                Escolha acessórios para seu personagem!
+            </p>
+
+            <div class="shop-items">
+
+                <button class="shop-item" type="button"
+                    data-item="oculos" data-price="0">
+                    <span class="shop-item-icon">👓</span> 
+                    <span>Óculos</span>
+                    <strong>Grátis</strong>
+                </button>
+
+                <button class="shop-item" type="button"
+                    data-item="chapeu" data-price="30">
+                    <span class="shop-item-icon">🧢</span>
+                    <span>Boné</span>
+                    <strong>30 PX</strong>
+                </button>
+
+                <button class="shop-item" type="button"
+                    data-item="coroa" data-price="20">
+                    <span class="shop-item-icon">👑</span>
+                    <span>Coroa</span>
+                    <strong>20 PX</strong>
+                </button>
+
+                <button class="shop-item" type="button"
+                    data-item="mochila" data-price="40">
+                    <span class="shop-item-icon">🎒</span>
+                    <span>Mochila</span>
+                    <strong>40 PX</strong>
+                </button>
+
             </div>
 
-            <button id="btn-confirm-char" class="btn-orange-sm">Confirmar escolha</button>
-            <div id="character-message" class="error-message" style="display: none;"></div>
-        </section>
+            <p id="shop-message" aria-live="polite"></p>
+
+        </aside>
+
+    </div>
+
+    <button id="btn-confirm-char" class="btn-orange-sm">
+        🚀 Começar minha aventura!
+    </button>
+
+    <div id="character-message"
+        class="error-message" style="display: none;">
+    </div>
+
+</section>
+    
      <section id="screen-5" class="screen">
         <div class="dashboard-top">
     <div class="user-greeting">

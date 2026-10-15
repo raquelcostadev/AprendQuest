@@ -365,19 +365,110 @@ async function finishModule() {
 
     safePlaySound('victory');
 
+// Consulta os PX das atividades concluídas pelo usuário
+const { data: atividades, error: erroAtividades } =
+    await supabaseClient
+        .from('completed_activities')
+        .select('activity_key, xp_awarded')
+        .eq('user_id', user.id);
+
+if (erroAtividades) {
+    console.error('Erro ao consultar atividades:', erroAtividades);
+    showPxMessage('Não foi possível carregar o resumo da jornada.', true);
+    return;
+}
+
+// Soma os PX de cada categoria
+const resumo = {
+    programacao: 0,
+    hardware: 0,
+    montagem: 0,
+    emocional: 0
+};
+
+for (const atividade of atividades || []) {
+    const chave = atividade.activity_key || '';
+    const pontos = Number(atividade.xp_awarded) || 0;
+
+    if (chave.startsWith('programming_question_')) {
+        resumo.programacao += pontos;
+    } else if (chave.startsWith('hardware_question_')) {
+        resumo.hardware += pontos;
+    } else if (chave === 'final_pc_assembly') {
+        resumo.montagem += pontos;
+    } else if (chave === 'emotional_management') {
+        resumo.emocional += pontos;
+    }
+}
+
+const totalJornada =
+    resumo.programacao +
+    resumo.hardware +
+    resumo.montagem +
+    resumo.emocional;
+
+// Atualiza os valores no modal
+document.getElementById('px-programacao').textContent =
+    `${resumo.programacao} PX`;
+
+document.getElementById('px-hardware').textContent =
+    `${resumo.hardware} PX`;
+
+document.getElementById('px-montagem').textContent =
+    `${resumo.montagem} PX`;
+
+document.getElementById('px-emocional').textContent =
+    `${resumo.emocional} PX`;
+
+// Anima o total de PX aumentando gradualmente
+const totalElement = document.getElementById('px-total-jornada');
+
+if (totalElement) {
+    const duracao = 1200;
+    const inicio = performance.now();
+
+    function animarTotal(agora) {
+        const progresso = Math.min((agora - inicio) / duracao, 1);
+
+        // Suaviza o movimento da contagem
+        const suavizacao = 1 - Math.pow(1 - progresso, 3);
+
+        const valorAtual = Math.floor(totalJornada * suavizacao);
+
+        totalElement.textContent = `⚡ ${valorAtual} PX`;
+
+        if (progresso < 1) {
+            requestAnimationFrame(animarTotal);
+        } else {
+            totalElement.textContent = `⚡ ${totalJornada} PX`;
+        }
+    }
+
+    requestAnimationFrame(animarTotal);
+}
+
+
     if (modal) {
         modal.style.display = 'flex';
     }
 
-    if (typeof confetti === 'function') {
-        confetti({
-            particleCount: 120,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-    }
+  // Comemoração da conclusão da jornada
+if (typeof confetti === 'function') {
+    confetti({
+        particleCount: 100,
+        spread: 100,
+        startVelocity: 30,
+        gravity: 0.9,
+        ticks: 180,
+        origin: {
+            x: 0.5,
+            y: 0.6
+        },
+        zIndex: 2000,
+        disableForReducedMotion: true
+    });
 }
-
+}
 
 function redirectHome() {
     window.location.href = 'index.html';
