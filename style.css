@@ -1637,3 +1637,68 @@ background: linear-gradient(135deg, #d8fbe4, #c8f4ed, #dceaff);
             #10264a
         );
 }
+#character-px-balance {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    position: relative;
+    z-index: 10;
+    width: fit-content;
+    margin: 12px auto 20px;
+    padding: 10px 18px;
+    background-color: #fff3cd;
+    color: #5a3e00;
+    border: 2px solid #f0c36d;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Botões de devolução da loja */
+.return-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 10px 16px;
+    margin: 6px;
+
+    border: 2px solid #e8a4a4;
+    border-radius: 12px;
+
+    background: linear-gradient(135deg, #fff5f5, #ffe3e3);
+    color: #9b3030;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+}
+
+.return-item:not(:disabled):hover {
+    background: linear-gradient(135deg, #ffe3e3, #ffcaca);
+    box-shadow: 0 4px 10px rgba(155, 48, 48, 0.18);
+    transform: translateY(-2px);
+}
+
+.return-item:not(:disabled):active {
+    transform: scale(0.97);
+}
+
+.return-item:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.return-item:focus-visible {
+    outline: 3px solid #e8a4a4;
+    outline-offset: 3px;
+}
+
+

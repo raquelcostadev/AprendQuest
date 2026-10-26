@@ -820,25 +820,68 @@ function showShopMessage(message, isError = false) {
     shopMessage.style.color = isError ? '#dc2626' : '#15803d';
 }
 
+
 function updateShopXp(totalXp) {
-    const xpElement = document.getElementById('user-px');
+    const xp = Number(totalXp);
 
-    if (!xpElement) return;
-
-    // Mantém a estrutura do indicador de nível da tela inicial.
-    const xpSpan = xpElement.querySelector('span');
-
-    if (xpSpan) {
-        xpSpan.textContent = `${totalXp} XP`;
-
-        const level = Math.floor(totalXp / 100) + 1;
-        xpElement.firstChild.textContent = `Nível ${level} `;
-    } else {
-        xpElement.textContent = `⚡ ${totalXp} PX`;
+    if (!Number.isFinite(xp)) {
+        console.error('Saldo de PX inválido:', totalXp);
+        return;
     }
 
-    localStorage.setItem('userPX', totalXp);
+    // Indicador de nível na tela inicial
+    const xpElement = document.getElementById('user-px');
+
+    if (xpElement) {
+        const xpSpan = xpElement.querySelector('span');
+        const level = Math.floor(xp / 100) + 1;
+
+        if (xpSpan) {
+            xpSpan.textContent = `${xp} PX`;
+            xpElement.firstChild.textContent = `Nível ${level} `;
+        } else {
+            xpElement.textContent = `⚡ ${xp} PX`;
+        }
+    }
+
+    // Saldo na tela de seleção do personagem
+    const characterXpElement = document.getElementById('character-px-value');
+
+    if (characterXpElement) {
+        characterXpElement.textContent = `${xp} PX`;
+    }
+
+    // Mantém o saldo salvo no navegador
+    localStorage.setItem('userPX', String(xp));
 }
+async function loadCurrentUserPX() {
+    const { data: { user }, error: userError } =
+        await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+        console.error('Não foi possível identificar o usuário:', userError);
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from('user_progress')
+        .select('total_xp')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (error) {
+        console.error('Erro ao carregar saldo de PX:', error);
+        return;
+    }
+
+    if (!data) {
+        console.warn('Nenhum registro de progresso encontrado para o usuário.');
+        return;
+    }
+
+    updateShopXp(data.total_xp);
+}
+
 
 function renderEquippedAccessories() {
 if (!equippedAccessories) return;
@@ -868,7 +911,9 @@ equippedItems.forEach(item => {
 }
 
 
+
 function renderShopButtons() {
+    // Atualiza os botões de compra e equipamento.
     shopItems.forEach(button => {
         const itemName = button.dataset.item;
         const price = Number(button.dataset.price);
@@ -879,29 +924,45 @@ function renderShopButtons() {
 
         const status = button.querySelector('strong');
 
-        if (!status) return;
-
         button.disabled = shopBusy;
+
+        if (!status) return;
 
         if (!item) {
             status.textContent = price === 0 ? 'Grátis' : `${price} PX`;
+
             button.classList.remove('item-owned', 'item-equipped');
             button.setAttribute('aria-label', `Comprar ${itemName}`);
+
             return;
         }
 
         if (item.equipped) {
             status.textContent = 'Equipado ✓';
+
             button.classList.add('item-owned', 'item-equipped');
             button.setAttribute('aria-label', `Remover ${itemName}`);
         } else {
             status.textContent = 'Equipar';
+
             button.classList.add('item-owned');
             button.classList.remove('item-equipped');
             button.setAttribute('aria-label', `Equipar ${itemName}`);
         }
     });
+
+    // Atualiza os botões de devolução.
+    document.querySelectorAll('.return-item').forEach(button => {
+        const itemName = button.dataset.returnItem;
+
+        const item = ownedAccessories.find(
+            accessory => accessory.item_name === itemName
+        );
+
+        button.disabled = shopBusy || !item;
+    });
 }
+
 
 async function loadShop() {
     const supabaseClient = window.supabaseClient;
@@ -1033,6 +1094,74 @@ async function handleShopItem(button) {
     }
 }
 
+async function handleReturnItem(button) {
+    if (shopBusy) return;
+
+    const itemName = button.dataset.returnItem;
+    const supabaseClient = window.supabaseClient;
+
+    if (!supabaseClient) {
+        showShopMessage('Não foi possível conectar à loja.', true);
+        return;
+    }
+
+    const item = ownedAccessories.find(
+        accessory => accessory.item_name === itemName
+    );
+
+    if (!item) {
+        showShopMessage('Você não possui esse acessório.', true);
+        return;
+    }
+
+    shopBusy = true;
+    renderShopButtons();
+
+    try {
+        const { data, error } = await supabaseClient.rpc(
+            'return_shop_item',
+            { p_item_name: itemName }
+        );
+
+        if (error) {
+            console.error('Erro ao devolver acessório:', error);
+            showShopMessage('Não foi possível devolver o acessório.', true);
+            return;
+        }
+
+        if (!data || !data.success) {
+            showShopMessage(
+                data?.message || 'Não foi possível devolver o acessório.',
+                true
+            );
+            return;
+        }
+
+        updateShopXp(data.total_xp);
+        await loadShop();
+
+        showShopMessage(
+            `Acessório devolvido! Você recebeu ${data.refund} PX de volta.`
+        );
+    } catch (error) {
+        console.error('Erro inesperado na devolução:', error);
+        showShopMessage('Ocorreu um erro. Tente novamente.', true);
+    } finally {
+        shopBusy = false;
+        renderShopButtons();
+    }
+}
+
+document.querySelectorAll('.return-item').forEach(button => {
+    button.addEventListener('click', () => {
+        handleReturnItem(button);
+    });
+});
+
+
+
+
+
 shopItems.forEach(button => {
     button.addEventListener('click', () => {
         handleShopItem(button);
@@ -1046,6 +1175,7 @@ if (customizationScreen) {
     const observer = new MutationObserver(() => {
         if (customizationScreen.classList.contains('active')) {
             loadShop();
+            loadCurrentUserPX();
         }
     });
 
