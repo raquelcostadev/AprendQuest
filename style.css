@@ -845,8 +845,19 @@ body {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+    /* Adicione estas linhas para subir o card inteiro */
 }
 
+/* Seleção de personagens */
+
+.customization-screen .character-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    
+    /* Em vez de usar top negativo, use um margin-top leve se precisar ajustar */
+    margin-top: 20px; 
+}
 .customization-screen .char-card {
     min-width: 0;
     padding: 10px 5px;
@@ -1306,7 +1317,7 @@ box-shadow:
 #screen-4 #btn-confirm-char {
 display: block;
 position: relative;
-top: -90px;
+top: -270px;
 margin: 0 auto -32px;
 z-index: 10;
 padding: 14px 32px;
@@ -1700,5 +1711,116 @@ background: linear-gradient(135deg, #d8fbe4, #c8f4ed, #dceaff);
     outline: 3px solid #e8a4a4;
     outline-offset: 3px;
 }
+/* Adicione ou atualize este bloco no seu CSS */
+.customization-screen .character-panel {
+    position: relative;
+    top: -80px; /* Aumente este valor (ex: -50px, -60px) se quiser subir mais */
+}
+/* Ajuste do painel da loja */
+.customization-screen .shop-panel {
+    position: relative;
+    top: -80px; /* Use o mesmo valor que colocou no painel de personagens para ficarem alinhados (ex: -40px, -50px, etc.) */
+}
+/* Botão Começar Minha Aventura Centralizado e Estático */
+#screen-4 #btn-confirm-char {
+    display: block;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza perfeitamente no meio da tela */
+    top: 600px; /* Ajuste a altura exata se precisar subir ou descer */
+    
+    z-index: 10;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #8065e8, #5b7cfa);
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 5px 14px rgba(91, 92, 226, 0.25);
+    font-weight: 700;
+    
+    /* Removemos qualquer animação ou mudança de tamanho ao passar o mouse */
+    transition: none; 
+}
 
+/* Garante que ele não se mova mesmo se houver outro hover global */
+#screen-4 #btn-confirm-char:hover {
+    transform: translateX(-50%); /* Mantém apenas a centralização e anula qualquer escala/movimento */
+}
+/* Estilo ajustado para o botão de voltar ficar dentro da tela */
+.btn-voltar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #f7f8ff;
+    border: 2px solid #e4e9fa;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #35416b;
+    cursor: pointer;
+    z-index: 20;
+    transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
 
+.btn-voltar:hover {
+    background: #eeeaff;
+    border-color: #9b8afc;
+    transform: scale(1.05);
+}
+.voltar-jornada-container {
+    position: fixed;
+    top: 20px;
+    right: 20px; /* Fixada no canto superior DIREITO */
+    left: auto;   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background-color: #1e293b;
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.voltar-jornada-container:hover {
+    background-color: #334155;
+    transform: scale(1.08);
+}
+
+/* O texto flutuante (tooltip) aparece para a esquerda da seta para não sumir da tela */
+.voltar-jornada-container .tooltip-texto {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1e293b;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    position: absolute;
+    right: 55px; /* Aparece à esquerda da seta */
+    left: auto;
+    white-space: nowrap;
+    font-size: 13px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+}
+
+.voltar-jornada-container:hover .tooltip-texto {
+    visibility: visible;
+    opacity: 1;
+}
+h2{
+    color:#db5b24;
+}
+.toggle-password svg {
+    pointer-events: none; /* Garante que o clique atravesse o SVG e vá direto para o botão */
+}

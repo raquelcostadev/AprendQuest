@@ -10,6 +10,11 @@
 <body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;">
 
     <main id="app-container" style="width: 100%; max-width: 480px; padding: 20px;">
+        <!-- Seta flutuante para voltar direto para os cards da trilha -->
+<a href="index.html" class="voltar-jornada-container" onclick="localStorage.setItem('voltouDoQuiz', 'true')" title="Voltar para a Trilha de Aprendizado">
+    <span class="seta-icone">←</span>
+    <span class="tooltip-texto">Voltar para a Trilha</span>
+</a>
 
         <!-- TELA 1: INTRODUÇÃO -->
         <section id="intro-screen" class="screen active">
@@ -32,13 +37,14 @@
         <!-- TELA 2: PERGUNTAS DO QUIZ -->
         <section id="quiz-screen" class="screen" style="display: none !important;">
             <div class="web-card">
+              <button class="btn-voltar" onclick="voltarParaTelaAnterior()" title="Ver introdução do módulo">←</button>
                 
                <div class="user-progress-badge">
     <span id="user-level" class="level-tag">Nível 1</span>
     <span id="user-px" class="px-tag">⚡ 0 PX</span>
    </div>
 
-                <h2 id="quiz-question-counter" class="quiz-counter-title">Pergunta 1 de 3</h2>
+               
 
                 <div class="progress-bar-container">
                     <div id="quiz-progress-fill" class="progress-bar-fill" style="width: 33%;">
@@ -50,7 +56,7 @@
                     <span id="feedback-icon" class="feedback-icon">💡</span>
                     <p id="feedback-text" class="feedback-text"></p>
                 </div>
-
+             <div id="quiz-question-counter" class="question-counter-text" style="display: block !important; visibility: visible !important; color: #333 !important; font-size: 1rem !important; font-weight: bold !important; margin-bottom: 10px;">Carregando contador...</div>
                 <p id="quiz-question-text" class="quiz-question-text">Carregando pergunta...</p>
 
                 <div id="quiz-options-container" class="quiz-options-grid"></div>
@@ -96,8 +102,9 @@
     <script>
 
         function goToNextModule() {
+            // Limpa o progresso anterior do hardware para garantir que comece do zero
+            localStorage.removeItem('progressoQuestaoHardware');
             window.location.href = 'Quiz_hardware.html';
         }
     </script>
 </body>
-</html>

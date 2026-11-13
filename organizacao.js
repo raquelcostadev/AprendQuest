@@ -473,3 +473,66 @@ if (typeof confetti === 'function') {
 function redirectHome() {
     window.location.href = 'index.html';
 }
+let destinoVoltaAtual = null;
+
+// Mapa de configuração de retorno para cada etapa
+const configuracaoTelas = {
+    'step-1': { mostrarSeta: false, voltarPara: null, textoTooltip: '' },
+    'step-2': { mostrarSeta: true, voltarPara: 1, textoTooltip: 'Voltar para o vídeo' },
+    'step-3': { mostrarSeta: true, voltarPara: 2, textoTooltip: 'Voltar para o Termômetro' },
+    'step-4': { mostrarSeta: true, voltarPara: 3, textoTooltip: 'Voltar para a Respiração' },
+    'step-5': { mostrarSeta: false, voltarPara: null, textoTooltip: '' }
+};
+
+// Função principal de navegação (com o nome exato que seus botões usam)
+function nextStep(stepNumber) {
+    safePlaySound('click');
+
+    // Pausa qualquer vídeo ativo na tela atual ao avançar
+    const activeVideo = document.querySelector('video');
+    if (activeVideo) {
+        activeVideo.pause();
+        activeVideo.currentTime = 0; 
+    }
+
+    // Esconde todos os cards de etapas
+    const todasAsTelas = document.querySelectorAll('.step-card');
+    todasAsTelas.forEach(tela => {
+        tela.classList.remove('active');
+        tela.style.display = 'none'; // Garante que some
+    });
+
+    // Mostra o card de destino
+    const idAlvo = `step-${stepNumber}`;
+    const nextCard = document.getElementById(idAlvo);
+    if (nextCard) {
+        nextCard.style.display = 'block'; // Mostra o card
+        nextCard.classList.add('active');
+    }
+
+    // Configura a setinha flutuante com base na regra de cada tela
+    const config = configuracaoTelas[idAlvo];
+    const seta = document.getElementById('seta-navegacao');
+    const tooltip = document.getElementById('tooltip-seta');
+
+    if (config && config.mostrarSeta) {
+        seta.classList.add('mostrar-seta');
+        seta.title = config.textoTooltip;
+        if (tooltip) tooltip.textContent = config.textoTooltip;
+        destinoVoltaAtual = config.voltarPara; // Guarda para qual step deve voltar
+    } else {
+        seta.classList.remove('mostrar-seta');
+        destinoVoltaAtual = null;
+    }
+
+    // Joga a página para o topo suavemente
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Função disparada ao clicar na setinha flutuante
+function executarVolta(event) {
+    event.preventDefault(); // Evita bugs na URL
+    if (destinoVoltaAtual !== null) {
+        nextStep(destinoVoltaAtual); // Chama o nextStep voltando o número do step!
+    }
+}

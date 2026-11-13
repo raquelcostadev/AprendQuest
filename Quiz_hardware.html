@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="Quiz_hardware.css">
 </head>
 <body>
+    <!-- Seta flutuante para voltar direto para os cards da trilha -->
+<a href="index.html" class="voltar-jornada-container" onclick="localStorage.setItem('voltouDoQuiz', 'true')" title="Voltar para a Trilha de Aprendizado">
+    <span class="seta-icone">←</span>
+    <span class="tooltip-texto">Voltar para a Trilha</span>
+</a>
 
     <section id="quiz-screen" class="screen active">
         <div class="web-card">
@@ -54,7 +59,7 @@
 
 <!-- Lógica do quiz de Hardware -->
 <script src="Quiz_hardware.js"></script>
-```
+
 
 
     <script>

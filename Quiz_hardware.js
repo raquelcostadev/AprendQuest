@@ -56,7 +56,23 @@ const hardwareQuestions = [
     }
 ];
 
+// Tenta pegar a questão salva no navegador
+const questaoSalva = localStorage.getItem('progressoQuestaoHardware');
+
 let currentQuestionIndex = 0;
+
+if (questaoSalva !== null) {
+    const indiceSalvo = parseInt(questaoSalva);
+    
+    // Se o índice salvo for menor que o total de perguntas, continua de onde parou
+    if (indiceSalvo < hardwareQuestions.length) {
+        currentQuestionIndex = indiceSalvo;
+    } else {
+        // Se já tinha chegado no fim antes, limpa e recomeça do zero
+        localStorage.removeItem('progressoQuestaoHardware');
+        currentQuestionIndex = 0;
+    }
+}
 let selectedOptionIndex = null;
 let attemptsLeft = 2;
 let currentPX = Number(localStorage.getItem('userPX')) || 0;
@@ -240,6 +256,8 @@ setTimeout(() => {
 function nextQuestion() {
     if (currentQuestionIndex < hardwareQuestions.length - 1) {
         currentQuestionIndex++;
+        // 👉 É SÓ ADICIONAR ESTA LINHA AQUI EMBAIXO:
+        localStorage.setItem('progressoQuestaoHardware', currentQuestionIndex);
         loadQuestion();
     } else {
         showFeedback("Incrível! Você concluiu a missão de Hardware!", "🏆", "success");
@@ -319,3 +337,38 @@ async function addExperience(questionId) {
     return true;
 }
 
+function voltarParaTelaAnterior() {
+    const quizScreen = document.getElementById('quiz-screen');
+    const stepCard = document.getElementById('step-1'); // ou o ID do card introdutório de hardware
+
+    // Se estiver no quiz, volta para o card introdutório
+    if (quizScreen && quizScreen.classList.contains('active')) {
+        quizScreen.classList.remove('active');
+        if (stepCard) stepCard.classList.add('active');
+        return;
+    }
+
+    // Se estiver no card introdutório, volta para a tela principal da Jornada (ou histórico)
+    window.history.back();
+}
+// --- SALVAR O PROGRESSO DO QUIZ ---
+
+// Quando o usuário avançar para a próxima questão, salve o número dela:
+// Substitua 'questaoAtual' pela variável que controla o número da questão no seu código
+localStorage.setItem('progressoQuestaoHardware', questaoAtual);
+
+// Quando a tela do quiz for aberta, verifique se existe um progresso salvo:
+window.addEventListener('DOMContentLoaded', () => {
+    const questaoSalva = localStorage.getItem('progressoQuestaoHardware');
+    
+    if (questaoSalva) {
+        // Converte o valor salvo para número e define na sua variável de controle
+        questaoAtual = parseInt(questaoSalva);
+        
+        // Chama a função que exibe a questão na tela
+        carregarQuestao(questaoAtual); 
+    }
+});
+
+// (Dica extra) Se o usuário terminar o quiz ou quiser reiniciar do zero, 
+// basta limpar o salvamento com: localStorage.removeItem('progressoQuestaoHardware');

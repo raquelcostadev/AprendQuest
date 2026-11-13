@@ -160,7 +160,11 @@ function loadQuestion() {
 
     const progressPercent = Math.round(((currentQuestionIndex + 1) / programmingQuestions.length) * 100);
     
-    document.getElementById('quiz-question-counter').innerText = `Pergunta ${currentQuestionIndex + 1} de ${programmingQuestions.length}`;
+    // ✨ Versão blindada para o contador de perguntas
+    const questionCounter = document.getElementById('quiz-question-counter');
+    if (questionCounter) {
+        questionCounter.innerText = `Pergunta ${currentQuestionIndex + 1} de ${programmingQuestions.length}`;
+    }
     
     const progressFill = document.getElementById('quiz-progress-fill');
     const progressText = document.getElementById('quiz-progress-text');
@@ -169,25 +173,31 @@ function loadQuestion() {
         progressText.innerText = `${progressPercent}%`;
     }
 
-    document.getElementById('quiz-question-text').innerText = q.question;
+    const questionTextElement = document.getElementById('quiz-question-text');
+    if (questionTextElement) {
+        questionTextElement.innerText = q.question;
+    }
 
     const optionsContainer = document.getElementById('quiz-options-container');
-    optionsContainer.innerHTML = '';
+    if (optionsContainer) {
+        optionsContainer.innerHTML = '';
 
-    q.options.forEach((optionText, index) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'quiz-option-btn';
-        btn.innerText = optionText;
-        btn.onclick = () => selectOption(index, btn);
-        optionsContainer.appendChild(btn);
-    });
+        q.options.forEach((optionText, index) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'quiz-option-btn';
+            btn.innerText = optionText;
+            btn.onclick = () => selectOption(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
 
     const confirmBtn = document.getElementById('btn-confirm-answer');
-    confirmBtn.disabled = true;
-    confirmBtn.innerText = "Confirmar Resposta";
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerText = "Confirmar Resposta";
+    }
 }
-
 function selectOption(index, btnElement) {
     selectedOptionIndex = index;
 
@@ -358,4 +368,74 @@ function nextQuestion() {
             window.location.href = 'Quiz_hardware.html';
         }, 1800);
     }
+}
+// Variável global para guardar o índice onde parou
+let indiceQuestaoSalva = 0;
+
+function voltarParaTelaAnterior() {
+    // 1. SALVA O ÍNDICE ATUAL EXATO ANTES DE SAIR DA TELA
+    if (typeof currentQuestionIndex !== 'undefined') {
+        indiceQuestaoSalva = currentQuestionIndex;
+    }
+
+    // 2. Esconde a tela do quiz
+    const quizScreen = document.getElementById('quiz-screen');
+    if (quizScreen) {
+        quizScreen.classList.remove('active');
+        quizScreen.style.setProperty('display', 'none', 'important');
+    }
+
+    // 3. Mostra a tela introdutória (#intro-screen)
+    const introScreen = document.getElementById('intro-screen');
+    if (introScreen) {
+        introScreen.classList.add('active');
+        introScreen.style.setProperty('display', 'block', 'important');
+
+        // 4. Configura o botão para "Retomar Quiz"
+        const botaoIniciar = introScreen.querySelector('button:not(.btn-voltar), .btn-avancar, .btn-iniciar');
+        if (botaoIniciar) {
+            botaoIniciar.textContent = "Retomar Quiz";
+            botaoIniciar.onclick = function() {
+                retomarQuizDaQuestaoSalva();
+            };
+        }
+    }
+}
+
+function retomarQuizDaQuestaoSalva() {
+    // 1. Esconde a tela introdutória
+    const introScreen = document.getElementById('intro-screen');
+    if (introScreen) {
+        introScreen.classList.remove('active');
+        introScreen.style.setProperty('display', 'none', 'important');
+    }
+
+    // 2. Mostra a tela do quiz
+    const quizScreen = document.getElementById('quiz-screen');
+    if (quizScreen) {
+        quizScreen.classList.add('active');
+        quizScreen.style.setProperty('display', 'block', 'important'); 
+    }
+
+    // 3. Roda a função de inicialização normal, masFORÇA o índice salvo logo após para ele não voltar para o zero
+    if (typeof startQuizQuestions === 'function') {
+        startQuizQuestions();
+    } else if (typeof loadQuestion === 'function') {
+        loadQuestion();
+    }
+
+    // Garante que a questão carregada seja exatamente a terceira (ou a que estava salva)
+    setTimeout(() => {
+        if (typeof currentQuestionIndex !== 'undefined') {
+            currentQuestionIndex = indiceQuestaoSalva;
+        }
+        if (typeof loadQuestion === 'function') {
+            loadQuestion(); // Desenha na tela a pergunta exata onde você parou
+        }
+    }, 50);
+}
+function voltarParaJornada() {
+    console.log("-> Botão de voltar clicado. Salvando no localStorage...");
+    localStorage.setItem('voltouDoQuiz', 'true');
+    window.location.href = "index.html";
 }

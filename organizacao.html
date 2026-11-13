@@ -209,15 +209,110 @@ body {
     align-items: center;
     min-height: 100vh;
 }
+.voltar-jornada-container {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        background-color: #1e293b;
+        color: white;
+        border-radius: 50%;
+        text-decoration: none;
+        font-size: 22px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
 
+    .voltar-jornada-container:hover {
+        background-color: #334155;
+        transform: scale(1.08);
+    }
+
+    /* O texto flutuante (tooltip) */
+    .tooltip-texto {
+        visibility: hidden;
+        opacity: 0;
+        background-color: #1e293b;
+        color: #fff;
+        text-align: center;
+        padding: 6px 12px;
+        border-radius: 6px;
+        position: absolute;
+        left: 55px; /* Aparece à direita da seta */
+        white-space: nowrap;
+        font-size: 13px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease;
+    }
+
+    .voltar-jornada-container:hover .tooltip-texto {
+        visibility: visible;
+        opacity: 1;
+    }
+   .voltar-jornada-container {
+    display: none; /* Oculta na Tela 1 (Vídeo) e na Tela 5 (Conclusão) */
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background-color: #1e293b;
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.voltar-jornada-container.mostrar-seta {
+    display: flex;
+}
+
+.voltar-jornada-container:hover {
+    background-color: #334155;
+    transform: scale(1.08);
+}
+
+.tooltip-texto {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1e293b;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    position: absolute;
+    left: 55px;
+    white-space: nowrap;
+    font-size: 13px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+}
+
+.voltar-jornada-container:hover .tooltip-texto {
+    visibility: visible;
+    opacity: 1;
+}
 
     </style>
 </head>
 <body>
+   <a href="#" id="seta-navegacao" class="voltar-jornada-container" onclick="executarVolta(event)" title="Voltar">
+    <span class="seta-icone">←</span>
+    <span id="tooltip-seta" class="tooltip-texto">Voltar</span>
+</a>
 
     <div class="org-container">
         <header class="header-status">
-            <button id="btn-back-main" class="btn-secondary">⬅️ Voltar ao Início</button>
             <strong id="user-px" style="color: #d97706;">⚡ 200 PX</strong>
         </header>
 
@@ -290,6 +385,7 @@ body {
 </div>
         <!-- ETAPA 3: RESPIRAÇÃO GUIADA (3 CICLOS) -->
         <section id="step-3" class="step-card">
+
             <span class="step-badge">Missão 3 de 5</span>
             <h2>🌬️ Respiração em 3 Ciclos</h2>
             <p>Acompanhe a bolinha por 3 ciclos. Inspire suavemente e solte o ar devagar, respeitando seu próprio ritmo. Não precisa prender a respiração. Se sentir desconforto, pare e respire normalmente. 🌬️</p>
@@ -298,7 +394,7 @@ body {
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 190px; background: #f8fafc; border-radius: 16px; border: 2px dashed #cbd5e1; margin: 10px 0; position: relative;">
                 <span id="breath-counter" style="position: absolute; top: 10px; font-size: 0.85rem; font-weight: bold; color: #64748b;">Ciclo 0 de 3</span>
                 <div id="breath-circle" style="width: 70px; height: 70px; background: #818cf8; border-radius: 50%; transition: all 2.5s ease-in-out; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem;">
-                    Pronto?
+                
                 </div>
                 <span id="breath-text" style="margin-top: 15px; font-weight: bold; color: #475569;">Clique para começar</span>
             </div>
@@ -312,7 +408,6 @@ body {
             <span class="step-badge">Missão 4 de 5</span>
             <h2>👀 Ancoragem do Olhar (Foco)</h2>
             <p>Olhe ao seu redor no quarto ou sala e encontre **3 coisas de cor Azul ou Vermelha**:</p>
-
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <input type="text" id="object-1" class="input-box" placeholder="1. Ex: Uma caneta">
                 <input type="text" id="object-2" class="input-box" placeholder="2. Ex: O caderno">
@@ -372,7 +467,8 @@ body {
     </div>
 
 </div>
-        <button class="btn-primary" style="background: #16a34a;" onclick="redirectHome()">Voltar ao Início 🚀</button>
+       <button class="btn-primary" style="background: #16a34a;" onclick="limparEConcluir('index.html')">Voltar ao Início 🚀</button>
+      
     </div>
 </div>
 <style>
@@ -387,7 +483,15 @@ body {
 <script src="supabase-config.js"></script>
 <script src="sons.js"></script>
 <script src="organizacao.js"></script>
-```
 
+<script>
+    function limparEConcluir(destino) {
+        // Limpa o progresso do hardware na memória do navegador
+        localStorage.removeItem('progressoQuestaoHardware');
+        
+        // Redireciona para o destino configurado
+        window.location.href = destino;
+    }
+</script>
 </body>
 </html>

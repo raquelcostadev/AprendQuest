@@ -186,7 +186,7 @@ if (loginErrorMsg) {
 }
 
     const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
+    const password = document.getElementById('login-password').value.trim();
     const submitButton = loginForm.querySelector('button[type="submit"]');
 
    if (!window.supabaseClient) {
@@ -1186,3 +1186,167 @@ if (customizationScreen) {
 }
 }})
 })
+
+async function cadastrarUsuario(email, password) {
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            alert("Erro ao criar conta: " + error.message);
+            return;
+        }
+
+        alert("Conta criada com sucesso! Faça login para continuar.");
+        
+        // Redireciona para a tela de login do seu aplicativo
+        // Exemplo trocando a classe ativa para a tela de login:
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-login').classList.add('active'); // Coloque o ID da sua tela de login
+
+    } catch (err) {
+        console.error("Erro inesperado no cadastro:", err);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Verifica se o usuário veio pelo botão de voltar do quiz
+    if (localStorage.getItem('voltouDoQuiz') === 'true') {
+        localStorage.removeItem('voltouDoQuiz'); // Limpa a chavinha
+
+        // Esconde a tela de splash/capa se ela estiver ativa
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) {
+            splashScreen.classList.remove('active');
+            splashScreen.style.display = 'none';
+        }
+
+        // Ativa diretamente a Tela 5 (Trilha de Aprendizado)
+        const screen5 = document.getElementById('screen-5');
+        if (screen5) {
+            screen5.classList.add('active');
+            screen5.style.display = 'block';
+        }
+        
+        // Ou, se o seu app usa a função nativa navigateTo, use esta linha no lugar:
+        // navigateTo('screen-5');
+    }
+});
+const toggleLoginPassword = document.getElementById('toggle-login-password');
+const loginPassword = document.getElementById('login-password');
+
+if (toggleLoginPassword && loginPassword) {
+    toggleLoginPassword.addEventListener('click', (e) => {
+        e.preventDefault(); // Evita qualquer comportamento padrão indesejado
+        
+        const mostrarSenha = loginPassword.type === 'password';
+        loginPassword.type = mostrarSenha ? 'text' : 'password';
+
+        console.log("Clicou! Novo tipo do input:", loginPassword.type); // Abre o F12 do navegador para ver se isso aparece
+
+        toggleLoginPassword.innerHTML = mostrarSenha
+            ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3l18 18"/>
+                <path d="M10.6 10.6a2 2 0 002.8 2.8"/>
+                <path d="M9.9 5.2A10.8 10.8 0 0112 5c6.4 0 10 7 10 7a15.8 15.8 0 01-4 4.8"/>
+                <path d="M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a10.5 10.5 0 004.2-.9"/>
+               </svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+               </svg>`;
+
+        toggleLoginPassword.setAttribute(
+            'aria-label',
+            mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'
+        );
+        toggleLoginPassword.setAttribute('aria-pressed', String(mostrarSenha));
+    });
+}  
+/* =================================================================
+   VALIDAÇÃO DE SENHA FORTE (Requisito de Segurança - AprendQuest)
+   Exige no mínimo 8 caracteres, com letra maiúscula, minúscula, 
+   número e caractere especial.
+   ================================================================= */
+function eSenhaForte(senha) {
+    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regexSenha.test(senha);
+}
+
+/* =================================================================
+   INTEGRAÇÃO NO FORMULÁRIO DE CRIAR CONTA (#register-form)
+   Valida se a senha é forte e se os dois campos de senha coincidem.
+   ================================================================= */
+const registerForm = document.getElementById('register-form');
+const registerMessage = document.getElementById('register-message');
+
+function showRegisterError(message) {
+    if (registerMessage) {
+        registerMessage.textContent = message;
+        registerMessage.style.display = 'block';
+    }
+}
+
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Limpa mensagens anteriores
+        if (registerMessage) {
+            registerMessage.textContent = '';
+            registerMessage.style.display = 'none';
+        }
+
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+        // 1. Valida se as senhas coincidem
+        if (password !== confirmPassword) {
+            showRegisterError('As senhas não coincidem. Digite novamente.');
+            return;
+        }
+
+        // 2. Valida se a senha atende aos requisitos de segurança do professor
+        if (!eSenhaForte(password)) {
+            showRegisterError('A senha deve ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.');
+            return;
+        }
+
+        // 3. Se passou nas validações, prossegue com o cadastro no Supabase
+        try {
+            if (!window.supabaseClient) {
+                showRegisterError('Erro de conexão com o sistema. Atualize a página.');
+                return;
+            }
+
+            const { data, error } = await window.supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: name
+                    }
+                }
+            });
+
+            if (error) throw error;
+
+            if (registerMessage) {
+                registerMessage.style.color = 'green';
+                registerMessage.textContent = 'Conta criada com sucesso! Verifique seu e-mail se necessário.';
+                registerMessage.style.display = 'block';
+            }
+
+            // Opcional: limpar o formulário
+            registerForm.reset();
+
+        } catch (error) {
+            console.error('Erro no cadastro:', error.message);
+            showRegisterError('Erro ao criar conta: ' + error.message);
+        }
+    });
+}

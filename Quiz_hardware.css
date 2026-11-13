@@ -243,3 +243,57 @@ body {
     align-items: center;
     min-height: 100vh;
 }
+.voltar-jornada-container {
+    position: fixed;
+    top: 20px;
+    left: 20px; /* No canto esquerdo, já que não tem outra competindo com ela */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background-color: #1e293b;
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.voltar-jornada-container:hover {
+    background-color: #334155;
+    transform: scale(1.08);
+}
+
+/* O texto flutuante (tooltip) que aparece ao passar o mouse */
+.tooltip-texto {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1e293b;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    position: absolute;
+    left: 55px; /* Aparece à direita da seta */
+    white-space: nowrap;
+    font-size: 13px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+}
+
+.voltar-jornada-container:hover .tooltip-texto {
+    visibility: visible;
+    opacity: 1;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Muda de center para flex-start para permitir o espaçamento no topo */
+    padding-top: 50px; /* Distância do card em relação ao topo da tela (pode aumentar para 70px ou diminuir se preferir) */
+    min-height: 100vh;
+    margin: 0;
+}

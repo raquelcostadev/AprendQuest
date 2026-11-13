@@ -115,9 +115,19 @@
             </div>
         </div>
 
-        <button type="button" class="btn-conclude-final" onclick="window.location.href='organizacao.html'">
-            Concluir Missão 🚀
-        </button>
+        <button type="button" class="btn-conclude-final" onclick="limparEConcluir('organizacao.html')">
+    Concluir Missão 🚀
+</button>
+
+<script>
+    function limparEConcluir(destino) {
+        // Limpa o progresso do hardware para que ele comece do zero na próxima vez
+        localStorage.removeItem('progressoQuestaoHardware');
+        
+        // Vai para a página desejada que veio lá do botão
+        window.location.href = destino;
+    }
+</script>
     </div>
 </div>
 
